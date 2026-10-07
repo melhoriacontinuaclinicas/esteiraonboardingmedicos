@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Onboarding Médico App & Gestão SLA</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Google Fonts - Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              800: '#0c4a6e',
+              900: '#0f172a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+  <!-- TELA DE LOGIN -->
+  <div id="screen-login" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gradient-to-br from-brand-900 via-brand-800 to-slate-900">
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl p-6 sm:p-8 space-y-6 animate-fade-in border border-white/20">
+      <div class="text-center space-y-2">
+        <div class="w-16 h-16 bg-brand-500/10 text-brand-600 rounded-2xl flex items-center justify-center mx-auto text-3xl shadow-inner">
+          <i class="fa-solid fa-user-doctor"></i>
+        </div>
+        <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Onboarding Médico</h1>
+        <p class="text-sm text-slate-500">Acesse a plataforma de credenciamento e gestão SLA</p>
+      </div>
+
+      <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Usuário / E-mail</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+              <i class="fa-solid fa-envelope"></i>
+            </span>
+            <input type="text" id="login-user" required placeholder="Digite 'solicitante' ou 'admin'" 
+              class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all text-sm outline-none" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Senha</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+              <i class="fa-solid fa-lock"></i>
+            </span>
+            <input type="password" id="login-pass" required placeholder="••••••••" 
+              class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all text-sm outline-none" />
+          </div>
+        </div>
+
+        <div class="bg-brand-50 rounded-xl p-3 text-xs text-brand-800 space-y-1 border border-brand-100">
+          <p class="font-bold"><i class="fa-solid fa-key text-brand-600"></i> Acessos rápidos de teste:</p>
+          <p>• Solicitante: <strong>solicitante</strong> / <strong>123456</strong></p>
+          <p>• Admin / Receptivo SLA: <strong>admin</strong> / <strong>admin123</strong></p>
+        </div>
+
+        <button type="submit" 
+          class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 active:scale-[0.99] text-white font-semibold rounded-xl shadow-lg shadow-brand-500/30 transition-all duration-200 flex items-center justify-center gap-2 text-sm">
+          <span>Acessar Plataforma</span>
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- CONTAINER PRINCIPAL DO APP -->
+  <div id="app-container" class="hidden min-h-screen flex flex-col pb-20 md:pb-0">
+
+    <!-- HEADER -->
+    <header class="bg-brand-900 text-white sticky top-0 z-30 shadow-md">
+      <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-brand-600/50 border border-brand-400/30 rounded-xl flex items-center justify-center text-xl text-brand-100 shadow-sm">
+            <i class="fa-solid fa-hospital-user"></i>
+          </div>
+          <div>
+            <h2 class="font-bold text-base leading-tight">Onboarding & SLA Médicos</h2>
+            <p id="user-badge" class="text-xs text-brand-200 flex items-center gap-1.5">
+              <span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+              Sessão Ativa
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span id="role-tag" class="inline-block px-3 py-1 text-xs rounded-full bg-brand-800 text-brand-200 font-semibold border border-brand-700">
+            Usuário
+          </span>
+          <button onclick="logout()" title="Sair do aplicativo"
+            class="p-2 text-slate-300 hover:text-white hover:bg-brand-800 rounded-xl transition-all">
+            <i class="fa-solid fa-right-from-bracket text-lg"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL DAS ABAS -->
+    <main class="max-w-7xl w-full mx-auto px-4 py-6 flex-1">
+
+      <!-- ABA 1: FORMULÁRIO DE SOLICITAÇÃO DE NOVO PRESTADOR -->
+      <section id="tab-form" class="space-y-6 animate-fade-in">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-4">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900">Solicitação de Novo Prestador</h2>
+            <p class="text-sm text-slate-500">Preencha o questionário completo para dar início à esteira de onboarding.</p>
+          </div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-semibold w-fit">
+            <i class="fa-solid fa-bolt"></i> Esteira Automática Ativa
+          </span>
+        </div>
+
+        <form id="form-novo-prestador" onsubmit="salvarSolicitacao(event)" class="space-y-6">
+
+          <!-- DADOS DA ESTEIRA E DATAS -->
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-brand-700 flex items-center gap-2">
+              <i class="fa-regular fa-calendar-check"></i> Dados da Esteira & Cronograma
+            </h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Início da Esteira (Automático)</label>
+                <input type="text" id="field-inicio-esteira" readonly class="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono text-slate-600 font-semibold cursor-not-allowed" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Mês de Entrada *</label>
+                <input type="month" id="field-mes-entrada" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">CD Mês *</label>
+                <input type="text" id="field-cd-mes" placeholder="Ex: 202610" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Previsão Início Atendimento *</label>
+                <input type="date" id="field-previsao-inicio" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Tipo de Solicitação *</label>
+                <select id="field-tipo-solicitacao" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none bg-white">
+                  <option value="">Selecione...</option>
+                  <option value="Novo Credenciamento">Novo Credenciamento</option>
+                  <option value="Substituição de Profissional">Substituição de Profissional</option>
+                  <option value="Inclusão de Unidade/Agenda">Inclusão de Unidade/Agenda</option>
+                  <option value="Reativação">Reativação de Cadastro</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">É Caso Urgente? *</label>
+                <select id="field-urgente" onchange="toggleUrgenciaData()" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none bg-white">
+                  <option value="Não">Não</option>
+                  <option value="Sim">Sim</option>
+                </select>
+              </div>
+
+              <div id="box-data-urgente" class="hidden">
+                <label class="block text-xs font-semibold text-rose-600 mb-1">Data Início (Caso Urgente) *</label>
+                <input type="date" id="field-data-urgente" class="w-full border border-rose-300 bg-rose-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-rose-500 outline-none" />
+              </div>
+            </div>
+          </div>
+
+          <!-- DADOS DO MÉDICO & REGIÃO -->
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-brand-700 flex items-center gap-2">
+              <i class="fa-solid fa-user-md"></i> Dados Profissionais do Médico
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Operadora (Banco) *</label>
+                <input type="text" id="field-operadora" placeholder="Ex: Bradesco, SulAmérica, Unimed" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Região de Atendimento *</label>
+                <input type="text" id="field-regiao" placeholder="Ex: Sudeste / SP Capital" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Cidade de Atendimento *</label>
+                <input type="text" id="field-cidade" placeholder="Ex: São Paulo" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div class="lg:col-span-2">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Nome Completo do Médico *</label>
+                <input type="text" id="field-nome-medico" placeholder="Dr. Nome Completo" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">CD Pessoa / CPF do Prestador *</label>
+                <input type="text" id="field-cpf" placeholder="000.000.000-00 ou CD" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Especialidade *</label>
+                <input type="text" id="field-especialidade" placeholder="Ex: Cardiologia, Pediatria" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">É necessário acesso ao ARYA? *</label>
+                <select id="field-acesso-arya" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none bg-white">
+                  <option value="Sim">Sim</option>
+                  <option value="Não">Não</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Telefone do Prestador *</label>
+                <input type="tel" id="field-tel-prestador" placeholder="(11) 99999-9999" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">E-mail do Prestador *</label>
+              <input type="email" id="field-email-prestador" placeholder="medico@email.com" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+            </div>
+          </div>
+
+          <!-- UNIDADE E SOLICITANTE -->
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-brand-700 flex items-center gap-2">
+              <i class="fa-solid fa-building-user"></i> Unidade & Dados do Solicitante
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Nome da Unidade de Atendimento *</label>
+                <input type="text" id="field-nome-unidade" placeholder="Ex: Unidade Central Alfa" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Unidade de Atendimento (Com CD Local) *</label>
+                <input type="text" id="field-cd-local" placeholder="Ex: CD-1029 - Hospital Central" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Nome do Solicitante *</label>
+                <input type="text" id="field-nome-solicitante" placeholder="Seu Nome" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Área do Solicitante *</label>
+                <input type="text" id="field-area-solicitante" placeholder="Ex: Credenciamento" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">E-mail para Retorno *</label>
+                <input type="email" id="field-email-retorno" placeholder="retorno@empresa.com" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Telefone do Solicitante *</label>
+                <input type="tel" id="field-tel-solicitante" placeholder="(11) 98888-8888" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">E-mail Secundário para Retorno (Opcional)</label>
+              <input type="email" id="field-email-secundario" placeholder="copia@empresa.com" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 pt-2">
+            <button type="button" onclick="limparFormulario()" class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-100 font-medium text-sm transition-all">
+              Limpar Campos
+            </button>
+            <button type="submit" class="px-7 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-lg shadow-brand-500/20 active:scale-95 transition-all flex items-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i>
+              Enviar Solicitação
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ABA 2: CONSULTA DE STATUS -->
+      <section id="tab-status" class="hidden space-y-6 animate-fade-in">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900">Consulta de Status de Prestadores</h2>
+            <p class="text-sm text-slate-500">Acompanhamento e listagem geral de solicitações.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="relative">
+              <i class="fa-solid fa-search absolute left-3 top-3 text-slate-400 text-xs"></i>
+              <input type="text" id="search-status" oninput="renderTabelaStatus()" placeholder="Buscar médico, CPF ou cidade..."
+                class="pl-8 pr-3 py-2 border border-slate-300 rounded-xl text-xs w-full sm:w-60 focus:ring-2 focus:ring-brand-500 outline-none" />
+            </div>
+            <select id="filter-status" onchange="renderTabelaStatus()" class="border border-slate-300 rounded-xl text-xs py-2 px-3 focus:ring-2 focus:ring-brand-500 outline-none bg-white">
+              <option value="TODOS">Todos Status</option>
+              <option value="Pendente">Pendente</option>
+              <option value="Em Tratativa">Em Tratativa</option>
+              <option value="Liberado">Liberado / Concluído</option>
+              <option value="Cancelado">Cancelado</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
+                <tr>
+                  <th class="py-3 px-4">Protocolo / Data</th>
+                  <th class="py-3 px-4">Médico / Especialidade</th>
+                  <th class="py-3 px-4">Unidade / Operadora</th>
+                  <th class="py-3 px-4">Solicitante</th>
+                  <th class="py-3 px-4">Status Final</th>
+                  <th class="py-3 px-4 text-center">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-status" class="divide-y divide-slate-100 text-xs text-slate-700"></tbody>
+            </table>
+          </div>
+          <div id="status-empty" class="hidden p-8 text-center text-slate-400 space-y-2">
+            <i class="fa-solid fa-folder-open text-3xl"></i>
+            <p>Nenhum registro encontrado para os filtros informados.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABA 3: DASHBOARD GERAL E INSIGHTS -->
+      <section id="tab-dashboard" class="hidden space-y-6 animate-fade-in">
+        <div class="border-b border-slate-200 pb-4">
+          <h2 class="text-2xl font-bold text-slate-900">Dashboard Geral & Insights da Esteira</h2>
+          <p class="text-sm text-slate-500">Métricas consolidadas de volumes, status, prazos e gargalos de credenciamento.</p>
+        </div>
+
+        <!-- LINHA DO TEMPO DA ESTEIRA DE ONBOARDING (PIPELINE POR FASES) -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <div>
+              <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-timeline text-brand-600"></i>
+                Linha do Tempo da Esteira (Prestadores por Fase)
+              </h3>
+              <p class="text-xs text-slate-500">Acompanhamento do fluxo ponta a ponta dos médicos em cada estágio</p>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-brand-50 text-brand-700 rounded-full text-xs font-semibold w-fit border border-brand-200">
+              <i class="fa-solid fa-arrows-spin animate-spin"></i> Atualizado em tempo real
+            </span>
+          </div>
+
+          <!-- STEPPER DA LINHA DO TEMPO -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 relative">
+
+            <!-- FASE 1 -->
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col justify-between relative group hover:border-brand-400 transition-all">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="w-8 h-8 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold">1</span>
+                  <span id="fase1-pct" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">0%</span>
+                </div>
+                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">1. Triagem & Entrada</h4>
+                <p class="text-[11px] text-slate-500 mt-0.5">Aguardando início de tratativa</p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-slate-200/80 flex items-end justify-between">
+                <div>
+                  <p id="fase1-count" class="text-2xl font-black text-slate-800">0</p>
+                  <p class="text-[10px] text-slate-500 font-medium">prestadores</p>
+                </div>
+                <div class="w-8 h-8 rounded-lg bg-slate-200/60 text-slate-600 flex items-center justify-center text-sm">
+                  <i class="fa-solid fa-inbox"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- FASE 2 -->
+            <div class="bg-blue-50/60 border border-blue-200 rounded-2xl p-4 flex flex-col justify-between relative group hover:border-blue-400 transition-all">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="w-8 h-8 rounded-xl bg-blue-500 text-white flex items-center justify-center text-xs font-bold">2</span>
+                  <span id="fase2-pct" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-200 text-blue-800">0%</span>
+                </div>
+                <h4 class="text-xs font-bold text-blue-900 uppercase tracking-wider">2. Acessos & ARYA</h4>
+                <p class="text-[11px] text-blue-600 mt-0.5">Criando logins / ARYA</p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-blue-200/80 flex items-end justify-between">
+                <div>
+                  <p id="fase2-count" class="text-2xl font-black text-blue-700">0</p>
+                  <p class="text-[10px] text-blue-600 font-medium">prestadores</p>
+                </div>
+                <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-sm">
+                  <i class="fa-solid fa-key"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- FASE 3 -->
+            <div class="bg-amber-50/60 border border-amber-200 rounded-2xl p-4 flex flex-col justify-between relative group hover:border-amber-400 transition-all">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center text-xs font-bold">3</span>
+                  <span id="fase3-pct" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-800">0%</span>
+                </div>
+                <h4 class="text-xs font-bold text-amber-900 uppercase tracking-wider">3. Treinamento</h4>
+                <p class="text-[11px] text-amber-600 mt-0.5">Agendado ou em andamento</p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-amber-200/80 flex items-end justify-between">
+                <div>
+                  <p id="fase3-count" class="text-2xl font-black text-amber-700">0</p>
+                  <p class="text-[10px] text-amber-600 font-medium">prestadores</p>
+                </div>
+                <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center text-sm">
+                  <i class="fa-solid fa-chalkboard-user"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- FASE 4 -->
+            <div class="bg-purple-50/60 border border-purple-200 rounded-2xl p-4 flex flex-col justify-between relative group hover:border-purple-400 transition-all">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="w-8 h-8 rounded-xl bg-purple-500 text-white flex items-center justify-center text-xs font-bold">4</span>
+                  <span id="fase4-pct" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-200 text-purple-800">0%</span>
+                </div>
+                <h4 class="text-xs font-bold text-purple-900 uppercase tracking-wider">4. Abertura Agenda</h4>
+                <p class="text-[11px] text-purple-600 mt-0.5">Início de agenda em validação</p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-purple-200/80 flex items-end justify-between">
+                <div>
+                  <p id="fase4-count" class="text-2xl font-black text-purple-700">0</p>
+                  <p class="text-[10px] text-purple-600 font-medium">prestadores</p>
+                </div>
+                <div class="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center text-sm">
+                  <i class="fa-regular fa-calendar-check"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- FASE 5 -->
+            <div class="bg-emerald-50/60 border border-emerald-200 rounded-2xl p-4 flex flex-col justify-between relative group hover:border-emerald-400 transition-all">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xs font-bold"><i class="fa-solid fa-check"></i></span>
+                  <span id="fase5-pct" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-800">0%</span>
+                </div>
+                <h4 class="text-xs font-bold text-emerald-900 uppercase tracking-wider">5. Concluído & Liberado</h4>
+                <p class="text-[11px] text-emerald-600 mt-0.5">Pronto para atendimento</p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-emerald-200/80 flex items-end justify-between">
+                <div>
+                  <p id="fase5-count" class="text-2xl font-black text-emerald-700">0</p>
+                  <p class="text-[10px] text-emerald-600 font-medium">prestadores</p>
+                </div>
+                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-sm">
+                  <i class="fa-solid fa-user-check"></i>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- KPI CARDS -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs text-slate-500 font-medium">Total Solicitados</p>
+              <p id="kpi-total" class="text-2xl font-bold text-slate-800">0</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-clipboard-list"></i>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs text-slate-500 font-medium">Concluídos / Liberados</p>
+              <p id="kpi-liberados" class="text-2xl font-bold text-emerald-600">0</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-user-check"></i>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs text-slate-500 font-medium">Pendentes / Tratativa</p>
+              <p id="kpi-pendentes" class="text-2xl font-bold text-amber-500">0</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-clock"></i>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs text-slate-500 font-medium">Taxa Dentro do SLA (5 dias)</p>
+              <p id="kpi-taxa-sla" class="text-2xl font-bold text-brand-600">0%</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- LINHA DE GRÁFICOS 1 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-chart-column text-brand-600"></i>
+                Médicos Liberados por Período
+              </h3>
+              <span class="text-[10px] text-slate-400 uppercase font-semibold">Volume Mensal</span>
+            </div>
+            <div class="relative h-64 w-full">
+              <canvas id="chart-colunas"></canvas>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-chart-pie text-brand-600"></i>
+                Distribuição por Status
+              </h3>
+              <span class="text-[10px] text-slate-400 uppercase font-semibold">Visão Geral</span>
+            </div>
+            <div class="relative h-64 w-full flex items-center justify-center">
+              <canvas id="chart-pizza"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- LINHA DE GRÁFICOS 2 (INSIGHTS SLA E OPERADORAS) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-stopwatch text-brand-600"></i>
+                Tempo Médio de Permanência por Etapa (SLA vs Meta)
+              </h3>
+              <span class="text-[10px] text-slate-400 uppercase font-semibold">Em dias</span>
+            </div>
+            <div class="relative h-64 w-full">
+              <canvas id="chart-sla-etapas"></canvas>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-building-flag text-brand-600"></i>
+                Pendências por Operadora (Bancos)
+              </h3>
+              <span class="text-[10px] text-slate-400 uppercase font-semibold">Análise de Gargalos</span>
+            </div>
+            <div class="relative h-64 w-full">
+              <canvas id="chart-operadoras"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABA 4: TRATATIVA SLA DA ESTEIRA (RECEPTIVO / ADMIN) -->
+      <section id="tab-receptivo" class="hidden space-y-6 animate-fade-in">
+
+        <!-- TELA DE BLOQUEIO POR SENHA -->
+        <div id="admin-lock-screen" class="bg-white rounded-3xl p-8 max-w-md mx-auto text-center border border-slate-200 shadow-xl space-y-5 my-10">
+          <div class="w-16 h-16 bg-brand-100 text-brand-600 rounded-2xl flex items-center justify-center mx-auto text-2xl shadow-inner">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-slate-900">Acesso Restrito ao Receptivo & SLA</h3>
+            <p class="text-xs text-slate-500 mt-1">Informe a senha de administrador da equipe de tratativas para continuar.</p>
+          </div>
+
+          <div class="space-y-3">
+            <input type="password" id="admin-password-input" placeholder="Senha Administrador" 
+              class="w-full text-center tracking-widest text-lg py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none" />
+            <button onclick="validarSenhaAdmin()" 
+              class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl text-sm shadow-md transition-all">
+              Desbloquear Tratativa SLA
+            </button>
+            <p class="text-[11px] text-slate-400">Senha padrão de acesso: <span class="font-mono font-semibold text-slate-700">admin123</span></p>
+          </div>
+        </div>
+
+        <!-- PAINEL COMPLETO DE TRATATIVA E SLA DA ESTEIRA -->
+        <div id="admin-panel" class="hidden space-y-6">
+
+          <!-- CABEÇALHO ADMIN -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-2xl font-bold text-slate-900">Tratativa SLA da Esteira</h2>
+                <span class="px-3 py-1 rounded-full bg-brand-100 text-brand-800 text-xs font-bold border border-brand-200">
+                  <i class="fa-solid fa-user-gear"></i> Módulo Receptivo
+                </span>
+              </div>
+              <p class="text-sm text-slate-500">Gestão de tempos, prazos, dados operacionais e liberações médicas.</p>
+            </div>
+            <button onclick="bloquearAdmin()" class="px-4 py-2 border border-slate-300 hover:bg-slate-100 rounded-xl text-xs font-semibold text-slate-700 flex items-center gap-2 self-start md:self-auto transition-all">
+              <i class="fa-solid fa-lock"></i> Bloquear Painel
+            </button>
+          </div>
+
+          <!-- CARDS DE QUANTIDADES & TEMPOS MÉDIOS DE SLA -->
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+              <p class="text-[11px] text-slate-500 font-medium">Solicitações Total</p>
+              <p id="sla-card-total" class="text-xl font-extrabold text-slate-800">0</p>
+            </div>
+
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+              <p class="text-[11px] text-slate-500 font-medium">Total Pendentes</p>
+              <p id="sla-card-pendentes" class="text-xl font-extrabold text-amber-500">0</p>
+            </div>
+
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+              <p class="text-[11px] text-slate-500 font-medium">Concluídas / Liberadas</p>
+              <p id="sla-card-concluidas" class="text-xl font-extrabold text-emerald-600">0</p>
+            </div>
+
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+              <p class="text-[11px] text-slate-500 font-medium">T. Médio em Pendente</p>
+              <p id="sla-card-t-pendente" class="text-xl font-extrabold text-slate-700">0d</p>
+            </div>
+
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+              <p class="text-[11px] text-slate-500 font-medium">T. Médio em Tratativa</p>
+              <p id="sla-card-t-tratativa" class="text-xl font-extrabold text-blue-600">0d</p>
+            </div>
+
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+              <p class="text-[11px] text-slate-500 font-medium">SLA Médio Total</p>
+              <p id="sla-card-t-total" class="text-xl font-extrabold text-brand-600">0d</p>
+            </div>
+          </div>
+
+          <!-- BARRA DE FILTROS DA TRATATIVA DA ESTEIRA -->
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
+                <i class="fa-solid fa-filter text-brand-600"></i> Filtros de Pesquisa da Esteira SLA
+              </h3>
+              <button onclick="limparFiltrosSLA()" class="text-xs text-brand-600 hover:underline">Limpar Filtros</button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Palavra-chave / Médico / CPF</label>
+                <input type="text" id="sla-filter-search" oninput="renderTabelaSLA()" placeholder="Digite nome, CPF ou protocolo..." 
+                  class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Status Final / Tratativa</label>
+                <select id="sla-filter-status" onchange="renderTabelaSLA()" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                  <option value="TODOS">Todos os Status</option>
+                  <option value="Pendente">Pendente</option>
+                  <option value="Em Tratativa">Em Tratativa</option>
+                  <option value="Liberado">Liberado / Concluído</option>
+                  <option value="Cancelado">Cancelado</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Condição do SLA</label>
+                <select id="sla-filter-condicao" onchange="renderTabelaSLA()" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                  <option value="TODOS">Todas as Condições</option>
+                  <option value="NO_PRAZO">No Prazo (≤ 5 dias)</option>
+                  <option value="ATENCAO">Atenção (6-8 dias)</option>
+                  <option value="ATRASADO">SLA Estourado (> 8 dias)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Período de Entrada</label>
+                <input type="month" id="sla-filter-periodo" onchange="renderTabelaSLA()" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+            </div>
+          </div>
+
+          <!-- TABELA DE TRATATIVA SLA DA ESTEIRA -->
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-100 text-slate-600 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200">
+                  <tr>
+                    <th class="py-3 px-3">Protocolo</th>
+                    <th class="py-3 px-3">Médico / Especialidade</th>
+                    <th class="py-3 px-3">Início Esteira</th>
+                    <th class="py-3 px-3">Tempo / SLA Status</th>
+                    <th class="py-3 px-3">ARYA</th>
+                    <th class="py-3 px-3">Op. Resp.</th>
+                    <th class="py-3 px-3">Status Tratativa</th>
+                    <th class="py-3 px-3 text-center">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-sla" class="divide-y divide-slate-100 text-slate-700"></tbody>
+              </table>
+            </div>
+            <div id="sla-empty" class="hidden p-8 text-center text-slate-400 space-y-2">
+              <i class="fa-solid fa-filter-circle-xmark text-3xl"></i>
+              <p>Nenhuma solicitação encontrada para os filtros selecionados.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- MODAL DE EDIÇÃO DA TRATATIVA (RECEPTIVO/SLA) -->
+    <div id="modal-tratativa" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+      <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden animate-fade-in max-h-[90vh] flex flex-col">
+        <div class="bg-brand-900 text-white px-6 py-4 flex items-center justify-between">
+          <div>
+            <h3 class="font-bold text-base" id="modal-medico-nome">Tratativa de Solicitação</h3>
+            <p class="text-xs text-brand-200" id="modal-protocolo">Protocolo: #0000</p>
+          </div>
+          <button onclick="fecharModalTratativa()" class="text-slate-300 hover:text-white text-xl">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <form id="form-tratativa" onsubmit="salvarTratativa(event)" class="p-6 space-y-4 overflow-y-auto flex-1 text-xs">
+          <input type="hidden" id="tratativa-id" />
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">LOGIN PRESTADOR</label>
+              <input type="text" id="trat-login" placeholder="Ex: roberto.medico" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">LOGIN REDEARYA</label>
+              <input type="text" id="trat-login-redearya" placeholder="Ex: ARYA_R_MED" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">TREINAMENTO</label>
+              <select id="trat-treinamento" class="w-full border border-slate-300 rounded-lg p-2 bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="Pendente">Pendente</option>
+                <option value="Agendado">Agendado</option>
+                <option value="Concluído">Concluído</option>
+                <option value="Não Necessário">Não Necessário</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">DATA DO TREINAMENTO</label>
+              <input type="date" id="trat-data-treinamento" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">AGENDA</label>
+              <input type="text" id="trat-agenda" placeholder="Ex: Liberada / Bloco A" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">INÍCIO DA AGENDA</label>
+              <input type="date" id="trat-inicio-agenda" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">OP. RESPONSÁVEL *</label>
+              <input type="text" id="trat-op-responsavel" required placeholder="Nome do operador responsável" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">STATUS FINAL *</label>
+              <select id="trat-status-final" required class="w-full border border-slate-300 font-semibold rounded-lg p-2 bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="Pendente">Pendente</option>
+                <option value="Em Tratativa">Em Tratativa</option>
+                <option value="Liberado">Liberado / Concluído</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">OBSERVAÇÃO DA ESTEIRA / SLA</label>
+            <textarea id="trat-observacao" rows="3" placeholder="Anotações internas sobre pendências ou liberação..." class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
+          </div>
+
+          <div class="pt-4 flex items-center justify-end gap-2 border-t border-slate-100">
+            <button type="button" onclick="fecharModalTratativa()" class="px-4 py-2 border border-slate-300 rounded-xl text-slate-600 font-medium">Cancelar</button>
+            <button type="submit" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl shadow-md">Salvar Tratativa</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL VISUALIZAR DETALHES -->
+    <div id="modal-detalhes" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+      <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden animate-fade-in max-h-[90vh] flex flex-col">
+        <div class="bg-slate-800 text-white px-6 py-4 flex items-center justify-between">
+          <h3 class="font-bold text-base" id="detalhes-titulo">Ficha do Prestador</h3>
+          <button onclick="fecharModalDetalhes()" class="text-slate-300 hover:text-white text-xl">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div id="detalhes-conteudo" class="p-6 space-y-4 overflow-y-auto text-xs text-slate-700"></div>
+      </div>
+    </div>
+
+    <!-- BARRA DE NAVEGAÇÃO INFERIOR ESTILO APP -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-t border-slate-200 shadow-lg">
+      <div class="max-w-md mx-auto flex items-center justify-around py-2 px-2">
+        <button onclick="switchTab('form')" id="nav-form" class="nav-btn flex flex-col items-center gap-1 text-brand-600 px-3 py-1 rounded-xl transition-all">
+          <i class="fa-solid fa-circle-plus text-lg"></i>
+          <span class="text-[10px] font-medium">Solicitar</span>
+        </button>
+
+        <button onclick="switchTab('status')" id="nav-status" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-600 px-3 py-1 rounded-xl transition-all">
+          <i class="fa-solid fa-list-check text-lg"></i>
+          <span class="text-[10px] font-medium">Status</span>
+        </button>
+
+        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-600 px-3 py-1 rounded-xl transition-all">
+          <i class="fa-solid fa-chart-line text-lg"></i>
+          <span class="text-[10px] font-medium">Dashboard</span>
+        </button>
+
+        <button onclick="switchTab('receptivo')" id="nav-receptivo" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-600 px-3 py-1 rounded-xl transition-all">
+          <i class="fa-solid fa-stopwatch text-lg"></i>
+          <span class="text-[10px] font-medium">SLA Esteira</span>
+        </button>
+      </div>
+    </nav>
+
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'onboarding_medicos_db_v2';
+    let solicitacoes = [];
+    let adminAutenticado = false;
+
+    // INSTÂNCIAS DE GRÁFICOS
+    let chartColunasInstance = null;
+    let chartPizzaInstance = null;
+    let chartSlaEtapasInstance = null;
+    let chartOperadorasInstance = null;
+
+    // DADOS DE TESTE INICIAIS
+    const mockInicial = [
+      {
+        id: 'SOL-1001',
+        inicioEsteira: '2026-10-01 09:30',
+        mesEntrada: '2026-10',
+        cdMes: '202610',
+        previsaoInicio: '2026-10-20',
+        tipoSolicitacao: 'Novo Credenciamento',
+        urgente: 'Não',
+        dataUrgente: '',
+        operadora: 'Bradesco Saúde',
+        regiao: 'Sudeste - SP',
+        cidade: 'São Paulo',
+        nomeMedico: 'Dr. Roberto Carlos Andrade',
+        cpf: '123.456.789-00',
+        especialidade: 'Cardiologia',
+        acessoArya: 'Sim',
+        telPrestador: '(11) 98765-4321',
+        emailPrestador: 'roberto.andrade@medico.com',
+        nomeUnidade: 'Hospital São Lucas',
+        cdLocal: 'CD-102',
+        nomeSolicitante: 'Mariana Costa',
+        areaSolicitante: 'Credenciamento',
+        emailRetorno: 'mariana.costa@hospital.com',
+        telSolicitante: '(11) 97777-6666',
+        emailSecundario: 'suporte@hospital.com',
+        diasEmPendente: 1,
+        diasEmTratativa: 2,
+        login: 'roberto.andrade',
+        loginRedeArya: 'ARYA_R_ANDRADE',
+        treinamento: 'Concluído',
+        dataTreinamento: '2026-10-04',
+        agenda: 'Configurada',
+        inicioAgenda: '2026-10-20',
+        opResponsavel: 'Carlos Receptivo',
+        statusFinal: 'Liberado',
+        observacao: 'Prestador liberado para atendimento.'
+      },
+      {
+        id: 'SOL-1002',
+        inicioEsteira: '2026-10-02 11:15',
+        mesEntrada: '2026-10',
+        cdMes: '202610',
+        previsaoInicio: '2026-10-25',
+        tipoSolicitacao: 'Substituição de Profissional',
+        urgente: 'Sim',
+        dataUrgente: '2026-10-15',
+        operadora: 'SulAmérica',
+        regiao: 'Sul - PR',
+        cidade: 'Curitiba',
+        nomeMedico: 'Dra. Fernanda Oliveira',
+        cpf: '987.654.321-11',
+        especialidade: 'Pediatria',
+        acessoArya: 'Sim',
+        telPrestador: '(41) 99111-2233',
+        emailPrestador: 'fernanda.oliveira@medica.com',
+        nomeUnidade: 'Clínica Infantil Curitiba',
+        cdLocal: 'CD-305',
+        nomeSolicitante: 'Paulo Souza',
+        areaSolicitante: 'Operações',
+        emailRetorno: 'paulo.souza@clinica.com',
+        telSolicitante: '(41) 98888-1111',
+        emailSecundario: '',
+        diasEmPendente: 2,
+        diasEmTratativa: 3,
+        login: 'fernanda.oli',
+        loginRedeArya: 'ARYA_F_OLI',
+        treinamento: 'Agendado',
+        dataTreinamento: '2026-10-14',
+        agenda: 'Pendente',
+        inicioAgenda: '2026-10-15',
+        opResponsavel: 'Ana Receptivo',
+        statusFinal: 'Em Tratativa',
+        observacao: 'Aguardando validação do treinamento.'
+      },
+      {
+        id: 'SOL-1003',
+        inicioEsteira: '2026-09-20 14:00',
+        mesEntrada: '2026-09',
+        cdMes: '202609',
+        previsaoInicio: '2026-09-30',
+        tipoSolicitacao: 'Novo Credenciamento',
+        urgente: 'Não',
+        dataUrgente: '',
+        operadora: 'Unimed',
+        regiao: 'Nordeste - CE',
+        cidade: 'Fortaleza',
+        nomeMedico: 'Dr. Lucas Mendes',
+        cpf: '456.789.123-22',
+        especialidade: 'Ortopedia',
+        acessoArya: 'Não',
+        telPrestador: '(85) 98822-3344',
+        emailPrestador: 'lucas.mendes@medico.com',
+        nomeUnidade: 'Centro Médico Fortaleza',
+        cdLocal: 'CD-88',
+        nomeSolicitante: 'Mariana Costa',
+        areaSolicitante: 'Credenciamento',
+        emailRetorno: 'mariana.costa@hospital.com',
+        telSolicitante: '(11) 97777-6666',
+        emailSecundario: '',
+        diasEmPendente: 9,
+        diasEmTratativa: 0,
+        login: '',
+        loginRedeArya: '',
+        treinamento: 'Pendente',
+        dataTreinamento: '',
+        agenda: '',
+        inicioAgenda: '',
+        opResponsavel: 'Carlos Receptivo',
+        statusFinal: 'Pendente',
+        observacao: 'Solicitação pendente de documentação CRM.'
+      },
+      {
+        id: 'SOL-1004',
+        inicioEsteira: '2026-09-28 08:00',
+        mesEntrada: '2026-09',
+        cdMes: '202609',
+        previsaoInicio: '2026-10-10',
+        tipoSolicitacao: 'Inclusão de Unidade/Agenda',
+        urgente: 'Não',
+        dataUrgente: '',
+        operadora: 'Amil',
+        regiao: 'Sudeste - RJ',
+        cidade: 'Rio de Janeiro',
+        nomeMedico: 'Dra. Patricia Lima',
+        cpf: '333.222.111-99',
+        especialidade: 'Dermatologia',
+        acessoArya: 'Sim',
+        telPrestador: '(21) 97123-4567',
+        emailPrestador: 'patricia.lima@medica.com',
+        nomeUnidade: 'Unidade Copacabana',
+        cdLocal: 'CD-401',
+        nomeSolicitante: 'Juliana Rocha',
+        areaSolicitante: 'Atendimento',
+        emailRetorno: 'juliana@unidade.com',
+        telSolicitante: '(21) 98822-0000',
+        emailSecundario: '',
+        diasEmPendente: 2,
+        diasEmTratativa: 5,
+        login: 'patricia.lima',
+        loginRedeArya: 'ARYA_PLIMA',
+        treinamento: 'Concluído',
+        dataTreinamento: '2026-10-02',
+        agenda: 'Liberada',
+        inicioAgenda: '2026-10-05',
+        opResponsavel: 'Ana Receptivo',
+        statusFinal: 'Liberado',
+        observacao: 'Concluído com sucesso dentro do prazo.'
+      }
+    ];
+
+    window.onload = function() {
+      carregarBancoDados();
+      atualizarDataEsteiraAuto();
+      switchTab('form');
+    };
+
+    function carregarBancoDados() {
+      const db = localStorage.getItem(STORAGE_KEY);
+      if (db) {
+        try {
+          solicitacoes = JSON.parse(db);
+        } catch (e) {
+          solicitacoes = mockInicial;
+        }
+      } else {
+        solicitacoes = mockInicial;
+        salvarBancoDados();
+      }
+    }
+
+    function salvarBancoDados() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(solicitacoes));
+    }
+
+    function atualizarDataEsteiraAuto() {
+      const agora = new Date();
+      const strData = agora.toISOString().slice(0, 10) + ' ' + agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('field-inicio-esteira').value = strData;
+    }
+
+    // LOGIN & AUTENTICAÇÃO
+    function handleLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('login-user').value.toLowerCase().trim();
+      document.getElementById('screen-login').classList.add('hidden');
+      document.getElementById('app-container').classList.remove('hidden');
+
+      if (user.includes('admin')) {
+        adminAutenticado = true;
+        document.getElementById('role-tag').textContent = "Perfil: Admin SLA";
+        document.getElementById('user-badge').innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span> Admin Receptivo Conectado';
+      } else {
+        adminAutenticado = false;
+        document.getElementById('role-tag').textContent = "Perfil: Solicitante";
+        document.getElementById('user-badge').innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-blue-400"></span> Solicitante Conectado';
+      }
+    }
+
+    function logout() {
+      document.getElementById('screen-login').classList.remove('hidden');
+      document.getElementById('app-container').classList.add('hidden');
+      adminAutenticado = false;
+      document.getElementById('admin-lock-screen').classList.remove('hidden');
+      document.getElementById('admin-panel').classList.add('hidden');
+    }
+
+    function switchTab(tabName) {
+      const tabs = ['form', 'status', 'dashboard', 'receptivo'];
+      tabs.forEach(t => {
+        document.getElementById(`tab-${t}`).classList.add('hidden');
+        const btn = document.getElementById(`nav-${t}`);
+        if (btn) {
+          btn.classList.remove('text-brand-600', 'font-semibold');
+          btn.classList.add('text-slate-400');
+        }
+      });
+
+      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`nav-${tabName}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-400');
+        activeBtn.classList.add('text-brand-600', 'font-semibold');
+      }
+
+      if (tabName === 'status') renderTabelaStatus();
+      if (tabName === 'dashboard') renderDashboard();
+      if (tabName === 'receptivo') renderReceptivoArea();
+    }
+
+    function toggleUrgenciaData() {
+      const urg = document.getElementById('field-urgente').value;
+      const box = document.getElementById('box-data-urgente');
+      const input = document.getElementById('field-data-urgente');
+      if (urg === 'Sim') {
+        box.classList.remove('hidden');
+        input.required = true;
+      } else {
+        box.classList.add('hidden');
+        input.required = false;
+        input.value = '';
+      }
+    }
+
+    // SALVAR SOLICITAÇÃO
+    function salvarSolicitacao(e) {
+      e.preventDefault();
+
+      const nova = {
+        id: 'SOL-' + Math.floor(1000 + Math.random() * 9000),
+        inicioEsteira: document.getElementById('field-inicio-esteira').value,
+        mesEntrada: document.getElementById('field-mes-entrada').value,
+        cdMes: document.getElementById('field-cd-mes').value,
+        previsaoInicio: document.getElementById('field-previsao-inicio').value,
+        tipoSolicitacao: document.getElementById('field-tipo-solicitacao').value,
+        urgente: document.getElementById('field-urgente').value,
+        dataUrgente: document.getElementById('field-data-urgente').value,
+        operadora: document.getElementById('field-operadora').value,
+        regiao: document.getElementById('field-regiao').value,
+        cidade: document.getElementById('field-cidade').value,
+        nomeMedico: document.getElementById('field-nome-medico').value,
+        cpf: document.getElementById('field-cpf').value,
+        especialidade: document.getElementById('field-especialidade').value,
+        acessoArya: document.getElementById('field-acesso-arya').value,
+        telPrestador: document.getElementById('field-tel-prestador').value,
+        emailPrestador: document.getElementById('field-email-prestador').value,
+        nomeUnidade: document.getElementById('field-nome-unidade').value,
+        cdLocal: document.getElementById('field-cd-local').value,
+        nomeSolicitante: document.getElementById('field-nome-solicitante').value,
+        areaSolicitante: document.getElementById('field-area-solicitante').value,
+        emailRetorno: document.getElementById('field-email-retorno').value,
+        telSolicitante: document.getElementById('field-tel-solicitante').value,
+        emailSecundario: document.getElementById('field-email-secundario').value,
+        diasEmPendente: 1,
+        diasEmTratativa: 0,
+        login: '',
+        loginRedeArya: '',
+        treinamento: 'Pendente',
+        dataTreinamento: '',
+        agenda: '',
+        inicioAgenda: '',
+        opResponsavel: 'Aguardando Atribuição',
+        statusFinal: 'Pendente',
+        observacao: 'Nova solicitação registrada no sistema.'
+      };
+
+      solicitacoes.unshift(nova);
+      salvarBancoDados();
+
+      alert('Solicitação cadastrada com sucesso! Protocolo: ' + nova.id);
+      limparFormulario();
+      switchTab('status');
+    }
+
+    function limparFormulario() {
+      document.getElementById('form-novo-prestador').reset();
+      atualizarDataEsteiraAuto();
+      toggleUrgenciaData();
+    }
+
+    // TABELA DE STATUS
+    function renderTabelaStatus() {
+      const tbody = document.getElementById('tbody-status');
+      const search = document.getElementById('search-status').value.toLowerCase();
+      const filter = document.getElementById('filter-status').value;
+      const emptyBox = document.getElementById('status-empty');
+
+      tbody.innerHTML = '';
+
+      const filtrados = solicitacoes.filter(item => {
+        const bateFiltro = filter === 'TODOS' || item.statusFinal.includes(filter) || (filter === 'Liberado' && item.statusFinal === 'Liberado');
+        const bateBusca = item.nomeMedico.toLowerCase().includes(search) || 
+                          item.cpf.toLowerCase().includes(search) || 
+                          item.cidade.toLowerCase().includes(search) ||
+                          item.id.toLowerCase().includes(search);
+        return bateFiltro && bateBusca;
+      });
+
+      if (filtrados.length === 0) emptyBox.classList.remove('hidden');
+      else emptyBox.classList.add('hidden');
+
+      filtrados.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 transition-colors";
+
+        let badgeClass = "bg-amber-100 text-amber-800";
+        if (item.statusFinal === 'Liberado') badgeClass = "bg-emerald-100 text-emerald-800";
+        if (item.statusFinal === 'Cancelado') badgeClass = "bg-rose-100 text-rose-800";
+        if (item.statusFinal === 'Em Tratativa') badgeClass = "bg-blue-100 text-blue-800";
+
+        tr.innerHTML = `
+          <td class="py-3 px-4">
+            <span class="font-bold text-brand-700">${item.id}</span>
+            <div class="text-[10px] text-slate-400">${item.inicioEsteira}</div>
+          </td>
+          <td class="py-3 px-4">
+            <div class="font-semibold text-slate-800">${item.nomeMedico}</div>
+            <div class="text-[11px] text-slate-500">${item.especialidade}</div>
+          </td>
+          <td class="py-3 px-4">
+            <div>${item.nomeUnidade}</div>
+            <div class="text-[11px] text-slate-400">${item.operadora} - ${item.cidade}</div>
+          </td>
+          <td class="py-3 px-4">
+            <div>${item.nomeSolicitante}</div>
+            <div class="text-[11px] text-slate-400">${item.areaSolicitante}</div>
+          </td>
+          <td class="py-3 px-4">
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeClass}">
+              ${item.statusFinal}
+            </span>
+          </td>
+          <td class="py-3 px-4 text-center">
+            <button onclick="verDetalhes('${item.id}')" class="p-1.5 bg-slate-100 hover:bg-brand-50 hover:text-brand-600 rounded-lg text-slate-600 transition-all" title="Ver Detalhes">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function verDetalhes(id) {
+      const item = solicitacoes.find(s => s.id === id);
+      if (!item) return;
+
+      document.getElementById('detalhes-titulo').textContent = `${item.id} - ${item.nomeMedico}`;
+      const c = document.getElementById('detalhes-conteudo');
+
+      c.innerHTML = `
+        <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <div><strong>Status Final:</strong> <span class="font-bold text-brand-700">${item.statusFinal}</span></div>
+          <div><strong>Início Esteira:</strong> ${item.inicioEsteira}</div>
+          <div><strong>Tipo Solicitação:</strong> ${item.tipoSolicitacao}</div>
+          <div><strong>Urgente?</strong> ${item.urgente} ${item.dataUrgente ? '('+item.dataUrgente+')' : ''}</div>
+        </div>
+
+        <div class="space-y-1 pt-2">
+          <h4 class="font-bold text-slate-900 uppercase text-[10px] tracking-wider text-brand-600">Dados do Médico</h4>
+          <p><strong>CPF/CD:</strong> ${item.cpf} | <strong>Especialidade:</strong> ${item.especialidade}</p>
+          <p><strong>E-mail:</strong> ${item.emailPrestador} | <strong>Tel:</strong> ${item.telPrestador}</p>
+          <p><strong>Operadora:</strong> ${item.operadora} | <strong>Região/Cidade:</strong> ${item.regiao} / ${item.cidade}</p>
+          <p><strong>Acesso ARYA:</strong> ${item.acessoArya}</p>
+        </div>
+
+        <div class="space-y-1 border-t border-slate-200 pt-2">
+          <h4 class="font-bold text-slate-900 uppercase text-[10px] tracking-wider text-brand-600">Unidade & Solicitante</h4>
+          <p><strong>Unidade:</strong> ${item.nomeUnidade} (${item.cdLocal})</p>
+          <p><strong>Solicitante:</strong> ${item.nomeSolicitante} (${item.areaSolicitante})</p>
+          <p><strong>Contatos Retorno:</strong> ${item.emailRetorno} / ${item.telSolicitante}</p>
+        </div>
+
+        <div class="space-y-1 border-t border-slate-200 pt-2 bg-brand-50/50 p-3 rounded-xl">
+          <h4 class="font-bold text-slate-900 uppercase text-[10px] tracking-wider text-brand-700">Tratativa SLA Receptivo</h4>
+          <p><strong>Login:</strong> ${item.login || 'N/D'} | <strong>Login RedeArya:</strong> ${item.loginRedeArya || 'N/D'}</p>
+          <p><strong>Treinamento:</strong> ${item.treinamento} (${item.dataTreinamento || 'Sem data'})</p>
+          <p><strong>Agenda:</strong> ${item.agenda || 'N/D'} | <strong>Início Agenda:</strong> ${item.inicioAgenda || 'N/D'}</p>
+          <p><strong>Tempo na Esteira:</strong> ${(item.diasEmPendente||0) + (item.diasEmTratativa||0)} dias acumulados</p>
+          <p><strong>Op. Responsável:</strong> ${item.opResponsavel || 'N/D'}</p>
+          <p><strong>Observação:</strong> ${item.observacao || 'Nenhuma'}</p>
+        </div>
+      `;
+
+      document.getElementById('modal-detalhes').classList.remove('hidden');
+    }
+
+    function fecharModalDetalhes() {
+      document.getElementById('modal-detalhes').classList.add('hidden');
+    }
+
+    // CÁLCULO DE SLA
+    function calcularDiasEsteira(item) {
+      return (item.diasEmPendente || 0) + (item.diasEmTratativa || 0);
+    }
+
+    function obterBadgeSLA(diasTotal) {
+      if (diasTotal <= 5) {
+        return { label: 'No Prazo', class: 'bg-emerald-100 text-emerald-800 border-emerald-300' };
+      } else if (diasTotal <= 8) {
+        return { label: 'Atenção', class: 'bg-amber-100 text-amber-800 border-amber-300' };
+      } else {
+        return { label: 'SLA Estourado', class: 'bg-rose-100 text-rose-800 border-rose-300' };
+      }
+    }
+
+    // RECEPTIVO E SLA ADMIN
+    function validarSenhaAdmin() {
+      const pass = document.getElementById('admin-password-input').value;
+      if (pass === 'admin123' || pass === 'admin') {
+        adminAutenticado = true;
+        renderReceptivoArea();
+        document.getElementById('admin-password-input').value = '';
+      } else {
+        alert('Senha incorreta! Utilize admin123 para testar.');
+      }
+    }
+
+    function bloquearAdmin() {
+      adminAutenticado = false;
+      renderReceptivoArea();
+    }
+
+    function limparFiltrosSLA() {
+      document.getElementById('sla-filter-search').value = '';
+      document.getElementById('sla-filter-status').value = 'TODOS';
+      document.getElementById('sla-filter-condicao').value = 'TODOS';
+      document.getElementById('sla-filter-periodo').value = '';
+      renderTabelaSLA();
+    }
+
+    function renderReceptivoArea() {
+      const lockScreen = document.getElementById('admin-lock-screen');
+      const panel = document.getElementById('admin-panel');
+
+      if (!adminAutenticado) {
+        lockScreen.classList.remove('hidden');
+        panel.classList.add('hidden');
+        return;
+      }
+
+      lockScreen.classList.add('hidden');
+      panel.classList.remove('hidden');
+
+      renderTabelaSLA();
+    }
+
+    function renderTabelaSLA() {
+      const tbody = document.getElementById('tbody-sla');
+      const empty = document.getElementById('sla-empty');
+
+      const search = document.getElementById('sla-filter-search').value.toLowerCase();
+      const filterStatus = document.getElementById('sla-filter-status').value;
+      const filterCondicao = document.getElementById('sla-filter-condicao').value;
+      const filterPeriodo = document.getElementById('sla-filter-periodo').value;
+
+      tbody.innerHTML = '';
+
+      // ATUALIZAR CARDS DE QUANTIDADES & SLA
+      const total = solicitacoes.length;
+      const pendentes = solicitacoes.filter(s => s.statusFinal === 'Pendente' || s.statusFinal === 'Em Tratativa').length;
+      const concluidas = solicitacoes.filter(s => s.statusFinal === 'Liberado').length;
+
+      let somaPendente = 0, contaPendente = 0;
+      let somaTratativa = 0, contaTratativa = 0;
+      let somaTotalSla = 0;
+
+      solicitacoes.forEach(s => {
+        somaPendente += (s.diasEmPendente || 0);
+        contaPendente++;
+        somaTratativa += (s.diasEmTratativa || 0);
+        contaTratativa++;
+        somaTotalSla += calcularDiasEsteira(s);
+      });
+
+      const avgPendente = contaPendente ? (somaPendente / contaPendente).toFixed(1) : 0;
+      const avgTratativa = contaTratativa ? (somaTratativa / contaTratativa).toFixed(1) : 0;
+      const avgTotal = total ? (somaTotalSla / total).toFixed(1) : 0;
+
+      document.getElementById('sla-card-total').textContent = total;
+      document.getElementById('sla-card-pendentes').textContent = pendentes;
+      document.getElementById('sla-card-concluidas').textContent = concluidas;
+      document.getElementById('sla-card-t-pendente').textContent = `${avgPendente}d`;
+      document.getElementById('sla-card-t-tratativa').textContent = `${avgTratativa}d`;
+      document.getElementById('sla-card-t-total').textContent = `${avgTotal}d`;
+
+      // FILTRAGEM
+      const filtrados = solicitacoes.filter(s => {
+        const bateBusca = s.nomeMedico.toLowerCase().includes(search) || 
+                          s.cpf.toLowerCase().includes(search) || 
+                          s.id.toLowerCase().includes(search) ||
+                          s.especialidade.toLowerCase().includes(search);
+
+        const bateStatus = filterStatus === 'TODOS' || s.statusFinal.includes(filterStatus);
+
+        const diasTotal = calcularDiasEsteira(s);
+        let bateCondicao = true;
+        if (filterCondicao === 'NO_PRAZO') bateCondicao = diasTotal <= 5;
+        if (filterCondicao === 'ATENCAO') bateCondicao = diasTotal > 5 && diasTotal <= 8;
+        if (filterCondicao === 'ATRASADO') bateCondicao = diasTotal > 8;
+
+        let batePeriodo = true;
+        if (filterPeriodo) {
+          batePeriodo = s.mesEntrada === filterPeriodo;
+        }
+
+        return bateBusca && bateStatus && bateCondicao && batePeriodo;
+      });
+
+      if (filtrados.length === 0) empty.classList.remove('hidden');
+      else empty.classList.add('hidden');
+
+      filtrados.forEach(item => {
+        const diasTotal = calcularDiasEsteira(item);
+        const badgeSla = obterBadgeSLA(diasTotal);
+
+        let statusClass = "bg-amber-100 text-amber-800";
+        if (item.statusFinal === 'Liberado') statusClass = "bg-emerald-100 text-emerald-800";
+        if (item.statusFinal === 'Cancelado') statusClass = "bg-rose-100 text-rose-800";
+        if (item.statusFinal === 'Em Tratativa') statusClass = "bg-blue-100 text-blue-800";
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 transition-colors border-b border-slate-100";
+
+        tr.innerHTML = `
+          <td class="py-3 px-3 font-mono font-bold text-brand-700">${item.id}</td>
+          <td class="py-3 px-3">
+            <div class="font-bold text-slate-800">${item.nomeMedico}</div>
+            <div class="text-[11px] text-slate-500">${item.especialidade} - ${item.operadora}</div>
+          </td>
+          <td class="py-3 px-3 text-slate-600">${item.inicioEsteira}</td>
+          <td class="py-3 px-3">
+            <div class="font-semibold text-slate-800">${diasTotal} dias no total</div>
+            <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold border ${badgeSla.class}">
+              ${badgeSla.label}
+            </span>
+          </td>
+          <td class="py-3 px-3 font-semibold">${item.acessoArya}</td>
+          <td class="py-3 px-3">${item.opResponsavel || '<span class="text-slate-400">Pendente</span>'}</td>
+          <td class="py-3 px-3">
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${statusClass}">
+              ${item.statusFinal}
+            </span>
+          </td>
+          <td class="py-3 px-3 text-center">
+            <button onclick="abrirModalTratativa('${item.id}')" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-semibold text-[11px] shadow-sm transition-all flex items-center gap-1 mx-auto">
+              <i class="fa-solid fa-pen-to-square"></i> Tratar SLA
+            </button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function abrirModalTratativa(id) {
+      const item = solicitacoes.find(s => s.id === id);
+      if (!item) return;
+
+      document.getElementById('tratativa-id').value = item.id;
+      document.getElementById('modal-medico-nome').textContent = `Tratativa SLA: ${item.nomeMedico}`;
+      document.getElementById('modal-protocolo').textContent = `Protocolo: ${item.id} | Arya Solic: ${item.acessoArya} | Dias na esteira: ${calcularDiasEsteira(item)}d`;
+
+      document.getElementById('trat-login').value = item.login || '';
+      document.getElementById('trat-login-redearya').value = item.loginRedeArya || '';
+      document.getElementById('trat-treinamento').value = item.treinamento || 'Pendente';
+      document.getElementById('trat-data-treinamento').value = item.dataTreinamento || '';
+      document.getElementById('trat-agenda').value = item.agenda || '';
+      document.getElementById('trat-inicio-agenda').value = item.inicioAgenda || '';
+      document.getElementById('trat-op-responsavel').value = item.opResponsavel || '';
+      document.getElementById('trat-status-final').value = item.statusFinal || 'Pendente';
+      document.getElementById('trat-observacao').value = item.observacao || '';
+
+      document.getElementById('modal-tratativa').classList.remove('hidden');
+    }
+
+    function fecharModalTratativa() {
+      document.getElementById('modal-tratativa').classList.add('hidden');
+    }
+
+    function salvarTratativa(e) {
+      e.preventDefault();
+      const id = document.getElementById('tratativa-id').value;
+      const index = solicitacoes.findIndex(s => s.id === id);
+
+      if (index !== -1) {
+        solicitacoes[index].login = document.getElementById('trat-login').value;
+        solicitacoes[index].loginRedeArya = document.getElementById('trat-login-redearya').value;
+        solicitacoes[index].treinamento = document.getElementById('trat-treinamento').value;
+        solicitacoes[index].dataTreinamento = document.getElementById('trat-data-treinamento').value;
+        solicitacoes[index].agenda = document.getElementById('trat-agenda').value;
+        solicitacoes[index].inicioAgenda = document.getElementById('trat-inicio-agenda').value;
+        solicitacoes[index].opResponsavel = document.getElementById('trat-op-responsavel').value;
+        solicitacoes[index].statusFinal = document.getElementById('trat-status-final').value;
+        solicitacoes[index].observacao = document.getElementById('trat-observacao').value;
+
+        // Se mudou para em tratativa, ajusta contadores
+        if (solicitacoes[index].statusFinal === 'Em Tratativa' && solicitacoes[index].diasEmTratativa === 0) {
+          solicitacoes[index].diasEmTratativa = 1;
+        }
+
+        salvarBancoDados();
+        alert('Tratativa SLA salva com sucesso!');
+        fecharModalTratativa();
+        renderReceptivoArea();
+      }
+    }
+
+    // DASHBOARD E INSIGHTS
+    function renderDashboard() {
+      const total = solicitacoes.length;
+      const liberados = solicitacoes.filter(s => s.statusFinal === 'Liberado').length;
+      const pendentes = solicitacoes.filter(s => s.statusFinal === 'Pendente' || s.statusFinal === 'Em Tratativa').length;
+      const cancelados = solicitacoes.filter(s => s.statusFinal === 'Cancelado').length;
+
+      // CÁLCULO DA LINHA DO TEMPO (PRESTADORES POR FASE)
+      let f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0;
+
+      solicitacoes.forEach(s => {
+        if (s.statusFinal === 'Liberado') {
+          f5++;
+        } else if (s.statusFinal === 'Cancelado') {
+          // não contabiliza no pipeline ativo
+        } else if (s.statusFinal === 'Em Tratativa') {
+          if (s.inicioAgenda || s.agenda === 'Liberada') {
+            f4++;
+          } else if (s.treinamento === 'Agendado' || s.treinamento === 'Concluído') {
+            f3++;
+          } else if (s.login || s.loginRedeArya) {
+            f2++;
+          } else {
+            f1++;
+          }
+        } else {
+          // Status Pendente
+          f1++;
+        }
+      });
+
+      const calcPct = (val) => total ? Math.round((val / total) * 100) : 0;
+
+      document.getElementById('fase1-count').textContent = f1;
+      document.getElementById('fase1-pct').textContent = `${calcPct(f1)}%`;
+
+      document.getElementById('fase2-count').textContent = f2;
+      document.getElementById('fase2-pct').textContent = `${calcPct(f2)}%`;
+
+      document.getElementById('fase3-count').textContent = f3;
+      document.getElementById('fase3-pct').textContent = `${calcPct(f3)}%`;
+
+      document.getElementById('fase4-count').textContent = f4;
+      document.getElementById('fase4-pct').textContent = `${calcPct(f4)}%`;
+
+      document.getElementById('fase5-count').textContent = f5;
+      document.getElementById('fase5-pct').textContent = `${calcPct(f5)}%`;
+
+      // Taxa no SLA (<= 5 dias)
+      const noSlaCount = solicitacoes.filter(s => calcularDiasEsteira(s) <= 5).length;
+      const taxaSla = total ? Math.round((noSlaCount / total) * 100) : 0;
+
+      document.getElementById('kpi-total').textContent = total;
+      document.getElementById('kpi-liberados').textContent = liberados;
+      document.getElementById('kpi-pendentes').textContent = pendentes;
+      document.getElementById('kpi-taxa-sla').textContent = `${taxaSla}%`;
+
+      // 1. CHART COLUNAS (LIBERADOS POR MÊS)
+      const mesesMap = {};
+      solicitacoes.forEach(s => {
+        const m = s.mesEntrada || 'Outros';
+        if (!mesesMap[m]) mesesMap[m] = 0;
+        if (s.statusFinal === 'Liberado') mesesMap[m]++;
+      });
+
+      const labelsBarra = Object.keys(mesesMap).sort();
+      const dadosBarra = labelsBarra.map(k => mesesMap[k]);
+
+      const ctxColunas = document.getElementById('chart-colunas').getContext('2d');
+      if (chartColunasInstance) chartColunasInstance.destroy();
+
+      chartColunasInstance = new Chart(ctxColunas, {
+        type: 'bar',
+        data: {
+          labels: labelsBarra.length ? labelsBarra : ['Sem dados'],
+          datasets: [{
+            label: 'Médicos Liberados',
+            data: dadosBarra.length ? dadosBarra : [0],
+            backgroundColor: '#0284c7',
+            borderRadius: 8,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+      });
+
+      // 2. CHART PIZZA (STATUS GERAL)
+      const ctxPizza = document.getElementById('chart-pizza').getContext('2d');
+      if (chartPizzaInstance) chartPizzaInstance.destroy();
+
+      chartPizzaInstance = new Chart(ctxPizza, {
+        type: 'doughnut',
+        data: {
+          labels: ['Liberado', 'Pendente/Tratativa', 'Cancelado'],
+          datasets: [{
+            data: [liberados, pendentes, cancelados],
+            backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }
+        }
+      });
+
+      // 3. CHART TEMPO MÉDIO POR ETAPA (SLA VS META)
+      const ctxSla = document.getElementById('chart-sla-etapas').getContext('2d');
+      if (chartSlaEtapasInstance) chartSlaEtapasInstance.destroy();
+
+      chartSlaEtapasInstance = new Chart(ctxSla, {
+        type: 'bar',
+        data: {
+          labels: ['Triagem/Entrada', 'Validação ARYA', 'Treinamento', 'Abertura Agenda'],
+          datasets: [
+            {
+              label: 'Realizado (Dias)',
+              data: [1.8, 2.5, 3.1, 1.2],
+              backgroundColor: '#0369a1',
+              borderRadius: 6
+            },
+            {
+              label: 'Meta SLA (Dias)',
+              data: [1.0, 2.0, 2.0, 1.0],
+              backgroundColor: '#cbd5e1',
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: { y: { beginAtZero: true } },
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+
+      // 4. CHART PENDÊNCIAS POR OPERADORA (BANCO)
+      const opMap = {};
+      solicitacoes.forEach(s => {
+        const op = s.operadora || 'Outras';
+        if (!opMap[op]) opMap[op] = 0;
+        if (s.statusFinal !== 'Liberado') opMap[op]++;
+      });
+
+      const labelsOp = Object.keys(opMap);
+      const dadosOp = labelsOp.map(k => opMap[k]);
+
+      const ctxOp = document.getElementById('chart-operadoras').getContext('2d');
+      if (chartOperadorasInstance) chartOperadorasInstance.destroy();
+
+      chartOperadorasInstance = new Chart(ctxOp, {
+        type: 'bar',
+        data: {
+          labels: labelsOp.length ? labelsOp : ['Nenhuma'],
+          datasets: [{
+            label: 'Pendências Acumuladas',
+            data: dadosOp.length ? dadosOp : [0],
+            backgroundColor: '#f59e0b',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          plugins: { legend: { display: false } },
+          scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
