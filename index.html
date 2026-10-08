@@ -155,7 +155,7 @@
     </header>
 
     <!-- CONTEÚDO PRINCIPAL DAS ABAS -->
-    <main class="max-w-7xl w-full mx-auto px-4 py-6 flex-1">
+    <main class="max-w-7xl w-full mx-auto px-4 pt-6 pb-28 flex-1">
 
       <!-- ABA 1: FORMULÁRIO DE SOLICITAÇÃO DE NOVO PRESTADOR -->
       <section id="tab-form" class="space-y-6 animate-fade-in">
@@ -193,22 +193,18 @@
               <i class="fa-regular fa-calendar-check"></i> Dados da Esteira & Cronograma
             </h3>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Início da Esteira (Automático)</label>
-                <input type="text" id="field-inicio-esteira" readonly class="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono text-slate-600 font-semibold cursor-not-allowed" />
+                <input type="text" id="field-inicio-esteira" readonly class="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono text-slate-600 font-semibold cursor-not-allowed" placeholder="dd/mm/aaaa" />
               </div>
               <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1">Mês de Entrada *</label>
-                <input type="month" id="field-mes-entrada" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1">CD Mês *</label>
-                <input type="text" id="field-cd-mes" placeholder="Ex: 202610" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Mês e Ano de Entrada (Automático)</label>
+                <input type="text" id="field-mes-entrada" readonly class="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-600 font-semibold cursor-not-allowed" placeholder="Mês de AAAA" />
               </div>
               <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Previsão Início Atendimento *</label>
-                <input type="date" id="field-previsao-inicio" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+                <input type="text" id="field-previsao-inicio" inputmode="numeric" maxlength="10" placeholder="dd/mm/aaaa" autocomplete="off" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
               </div>
             </div>
 
@@ -234,7 +230,7 @@
 
               <div id="box-data-urgente" class="hidden">
                 <label class="block text-xs font-semibold text-rose-600 mb-1">Data Início (Caso Urgente) *</label>
-                <input type="date" id="field-data-urgente" class="w-full border border-rose-300 bg-rose-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-rose-500 outline-none" />
+                <input type="text" id="field-data-urgente" inputmode="numeric" maxlength="10" placeholder="dd/mm/aaaa" autocomplete="off" class="w-full border border-rose-300 bg-rose-50/50 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-rose-500 outline-none" />
               </div>
             </div>
           </div>
@@ -342,8 +338,8 @@
                 <input type="text" id="field-nome-unidade" placeholder="Ex: Unidade Central Alfa" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
               </div>
               <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1">Unidade de Atendimento (Com CD Local) *</label>
-                <input type="text" id="field-cd-local" placeholder="Ex: CD-1029 - Hospital Central" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Unidade de Atendimento *</label>
+                <input type="text" id="field-cd-local" placeholder="Informe a unidade de atendimento" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
               </div>
             </div>
 
@@ -854,7 +850,7 @@
             </div>
             <div>
               <label class="block font-semibold text-slate-700 mb-1">DATA DO TREINAMENTO</label>
-              <input type="date" id="trat-data-treinamento" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+              <input type="text" id="trat-data-treinamento" inputmode="numeric" maxlength="10" placeholder="dd/mm/aaaa" autocomplete="off" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
             </div>
           </div>
 
@@ -865,7 +861,7 @@
             </div>
             <div>
               <label class="block font-semibold text-slate-700 mb-1">INÍCIO DA AGENDA</label>
-              <input type="date" id="trat-inicio-agenda" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+              <input type="text" id="trat-inicio-agenda" inputmode="numeric" maxlength="10" placeholder="dd/mm/aaaa" autocomplete="off" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
             </div>
           </div>
 
@@ -952,26 +948,147 @@
     let supabaseOnline = false;
 
     function supabaseHeaders(extra = {}) {
+      // Chave sb_publishable_: enviar somente como API key.
+      // Não usar como Authorization: Bearer, pois não é um JWT.
       return {
         'apikey': SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
         'Content-Type': 'application/json',
         'Prefer': 'return=representation',
         ...extra
       };
     }
 
+    // Padrão visual do sistema: DD/MM/AAAA.
+    // O banco continua recebendo YYYY-MM-DD internamente.
+    function formatarDataBR(valor) {
+      if (!valor) return '';
+      const s = String(valor).trim();
+
+      let m = s.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T\s].*)?$/);
+      if (m) return `${m[3]}/${m[2]}/${m[1]}`;
+
+      m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      if (m) return s;
+
+      return s;
+    }
+
+    function mascaraDataBR(input) {
+      if (!input) return;
+      input.addEventListener('input', function () {
+        let v = this.value.replace(/\D/g, '').slice(0, 8);
+        if (v.length > 4) v = v.slice(0, 2) + '/' + v.slice(2, 4) + '/' + v.slice(4);
+        else if (v.length > 2) v = v.slice(0, 2) + '/' + v.slice(2);
+        this.value = v;
+      });
+      input.addEventListener('blur', function () {
+        if (!this.value) return;
+        const m = this.value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+        if (!m) {
+          this.setCustomValidity('Digite a data no formato dd/mm/aaaa.');
+          return;
+        }
+        const d = new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+        if (d.getFullYear() !== Number(m[3]) ||
+            d.getMonth() !== Number(m[2]) - 1 ||
+            d.getDate() !== Number(m[1])) {
+          this.setCustomValidity('Informe uma data válida no formato dd/mm/aaaa.');
+        } else {
+          this.setCustomValidity('');
+        }
+      });
+    }
+
+    function prepararCamposDataBR() {
+      ['field-previsao-inicio','field-data-urgente','trat-data-treinamento','trat-inicio-agenda'].forEach(id => {
+        mascaraDataBR(document.getElementById(id));
+      });
+    }
+
+    function preencherDataBR(id, valor) {
+      const el = document.getElementById(id);
+      if (el) el.value = formatarDataBR(valor);
+    }
+
+    // Normaliza datas antes de enviar ao PostgreSQL/Supabase.
+    // Aceita YYYY-MM-DD, DD/MM/YYYY e valores com hora.
+    function normalizarDataSupabase(valor) {
+      if (valor === null || valor === undefined || valor === '') return null;
+      const s = String(valor).trim();
+
+      function dataValida(ano, mes, dia) {
+        const d = new Date(Number(ano), Number(mes) - 1, Number(dia));
+        return d.getFullYear() === Number(ano) &&
+               d.getMonth() === Number(mes) - 1 &&
+               d.getDate() === Number(dia);
+      }
+
+      // Já está no padrão ISO do PostgreSQL.
+      let isoDate = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (isoDate) {
+        return dataValida(isoDate[1], isoDate[2], isoDate[3]) ? s : null;
+      }
+
+      // DD/MM/AAAA -> YYYY-MM-DD.
+      let br = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      if (br) {
+        return dataValida(br[3], br[2], br[1])
+          ? `${br[3]}-${br[2]}-${br[1]}`
+          : null;
+      }
+
+      // YYYY-MM-DD HH:mm:ss ou ISO -> somente a parte da data.
+      let iso = s.match(/^(\d{4})-(\d{2})-(\d{2})[T\s]/);
+      if (iso) {
+        return dataValida(iso[1], iso[2], iso[3])
+          ? `${iso[1]}-${iso[2]}-${iso[3]}`
+          : null;
+      }
+
+      // A planilha possui alguns textos em colunas de data, por exemplo
+      // "VER COM CRED SE MEDICO DESISTIU". Esses valores não são datas e
+      // devem ser enviados como NULL, nunca como texto para uma coluna DATE.
+      return null;
+    }
+
+    function normalizarDataHoraSupabase(valor) {
+      if (valor === null || valor === undefined || valor === '') return null;
+      const s = String(valor).trim();
+
+      // DD/MM/AAAA HH:mm[:ss] -> YYYY-MM-DD HH:mm[:ss]
+      const br = s.match(/^(\d{2})\/(\d{2})\/(\d{4})(?:\s+(.+))?$/);
+      if (br) {
+        const d = new Date(Number(br[3]), Number(br[2]) - 1, Number(br[1]));
+        if (d.getFullYear() !== Number(br[3]) ||
+            d.getMonth() !== Number(br[2]) - 1 ||
+            d.getDate() !== Number(br[1])) return null;
+        return `${br[3]}-${br[2]}-${br[1]}${br[4] ? ' ' + br[4] : ''}`;
+      }
+
+      // YYYY-MM-DD HH:mm:ss ou ISO.
+      const iso = s.match(/^(\d{4})-(\d{2})-(\d{2})([T\s].*)?$/);
+      if (iso) {
+        const d = new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]));
+        if (d.getFullYear() !== Number(iso[1]) ||
+            d.getMonth() !== Number(iso[2]) - 1 ||
+            d.getDate() !== Number(iso[3])) return null;
+        return `${iso[1]}-${iso[2]}-${iso[3]}${iso[4] ? iso[4] : ''}`;
+      }
+
+      return null;
+    }
+
     function mapToSupabase(item) {
       return {
         codigo_solicitacao: item.id,
-        data_solicitacao: item.dataSolicitacao || null,
-        inicio_esteira: item.inicioEsteira ? String(item.inicioEsteira).slice(0, 10) : null,
+        data_solicitacao: normalizarDataHoraSupabase(item.dataSolicitacao),
+        inicio_esteira: normalizarDataSupabase(item.inicioEsteira),
         mes_entrada: item.mesEntrada || null,
         cd_mes: item.cdMes || null,
-        previsao_inicio: item.previsaoInicio || null,
+        previsao_inicio: normalizarDataSupabase(item.previsaoInicio),
         tipo_solicitacao: item.tipoSolicitacao || null,
         urgente: String(item.urgente || '').toLowerCase() === 'sim',
-        data_urgente: item.dataUrgente || null,
+        data_urgente: normalizarDataSupabase(item.dataUrgente),
         operadora: item.operadora || null,
         regiao: item.regiao || null,
         estado: item.estado || null,
@@ -995,9 +1112,9 @@
         login: item.login || null,
         login_rede: item.loginRedeArya || null,
         treinamento: item.treinamento || null,
-        data_treinamento: item.dataTreinamento || null,
+        data_treinamento: normalizarDataSupabase(item.dataTreinamento),
         agenda: item.agenda || null,
-        inicio_agenda: item.inicioAgenda || null,
+        inicio_agenda: normalizarDataSupabase(item.inicioAgenda),
         operador_responsavel: item.opResponsavel || null,
         status: item.statusFinal || 'Pendente',
         area_atual: item.areaAtual || null,
@@ -1014,10 +1131,10 @@
         inicioEsteira: row.inicio_esteira || '',
         mesEntrada: row.mes_entrada || '',
         cdMes: row.cd_mes || '',
-        previsaoInicio: row.previsao_inicio || '',
+        previsaoInicio: normalizarDataSupabase(row.previsao_inicio) || '',
         tipoSolicitacao: row.tipo_solicitacao || '',
         urgente: row.urgente ? 'Sim' : 'Não',
-        dataUrgente: row.data_urgente || '',
+        dataUrgente: normalizarDataSupabase(row.data_urgente) || '',
         operadora: row.operadora || '',
         regiao: row.regiao || '',
         estado: row.estado || '',
@@ -1043,9 +1160,9 @@
         login: row.login || '',
         loginRedeArya: row.login_rede || '',
         treinamento: row.treinamento || '',
-        dataTreinamento: row.data_treinamento || '',
+        dataTreinamento: normalizarDataSupabase(row.data_treinamento) || '',
         agenda: row.agenda || '',
-        inicioAgenda: row.inicio_agenda || '',
+        inicioAgenda: normalizarDataSupabase(row.inicio_agenda) || '',
         opResponsavel: row.operador_responsavel || '',
         statusFinal: row.status_final || row.status || 'Pendente',
         areaAtual: row.area_atual || '',
@@ -1060,10 +1177,15 @@
       });
       if (!response.ok) {
         const detail = await response.text();
-        throw new Error('Supabase ' + response.status + ': ' + detail);
+        let mensagem = detail;
+        try {
+          const obj = JSON.parse(detail);
+          mensagem = obj.message || obj.error_description || obj.error || detail;
+        } catch (_) {}
+        throw new Error('Supabase HTTP ' + response.status + ': ' + mensagem);
       }
-      const text = await response.text();
-      return text ? JSON.parse(text) : [];
+      const responseText = await response.text();
+      return responseText ? JSON.parse(responseText) : [];
     }
 
     // Supabase REST limita respostas grandes. Busca todas as páginas de forma segura.
@@ -1092,13 +1214,25 @@
     }
 
     async function sincronizarDadosIniciais() {
-      // Reconciliacao controlada: somente completa a base se o banco ainda tiver menos
-      // registros que a base inicial embutida. Depois disso, Supabase passa a ser a fonte oficial.
-      const totalBanco = await contarNoSupabase();
-      if (totalBanco >= dadosPlanilhaRespostas.length) return { importados: 0, totalBanco };
+      // Primeiro testa a tabela diretamente. Isso evita depender de Content-Range/count
+      // e permite mostrar o erro real quando houver problema de RLS, tabela ou chave.
+      const existentes = await supabaseRequest(
+        SUPABASE_TABLE + '?select=id&limit=1',
+        { headers: { 'Prefer': 'return=minimal' } }
+      );
 
+      // Se já existe pelo menos um registro, não reimporta a planilha automaticamente.
+      // O Supabase passa a ser a fonte oficial dos dados.
+      if (Array.isArray(existentes) && existentes.length > 0) {
+        return { importados: 0, totalBanco: 'existente' };
+      }
+
+      // Banco vazio: faz uma única carga inicial dos registros incorporados no HTML.
+      // Depois disso, novas aberturas não repetem a importação.
       let importados = 0;
       const lote = dadosPlanilhaRespostas.map(mapToSupabase);
+      // Todas as datas do lote já passam pelo normalizador acima.
+      // Isso evita o erro PostgreSQL: "date/time field value out of range: DD/MM/YYYY".
       for (let i = 0; i < lote.length; i += 100) {
         const batch = lote.slice(i, i + 100);
         await supabaseRequest(SUPABASE_TABLE + '?on_conflict=codigo_solicitacao', {
@@ -1108,7 +1242,7 @@
         });
         importados += batch.length;
       }
-      return { importados, totalBanco };
+      return { importados, totalBanco: 0 };
     }
 
     async function salvarNoSupabase(item) {
@@ -1163,7 +1297,8 @@
       await carregarBancoDados();
       atualizarDataEsteiraAuto();
       switchTab('form');
-      atualizarStatusConexao(supabaseOnline);
+      // Não sobrescrever a mensagem detalhada de erro retornada pelo Supabase.
+      if (supabaseOnline) atualizarStatusConexao(true, solicitacoes.length + ' registros');
     };
 
     async function carregarBancoDados() {
@@ -1186,7 +1321,10 @@
           solicitacoes = JSON.parse(JSON.stringify(dadosPlanilhaRespostas));
           localStorage.setItem(STORAGE_KEY, JSON.stringify(solicitacoes));
         }
-        atualizarStatusConexao(false, 'modo local temporário');
+        const erroCurto = String(e && e.message ? e.message : e)
+          .replace(/\s+/g, ' ')
+          .slice(0, 150);
+        atualizarStatusConexao(false, erroCurto || 'falha na sincronização');
       }
     }
 
@@ -1203,8 +1341,9 @@
         renderReceptivoArea();
       } catch (e) {
         console.error(e);
-        atualizarStatusConexao(false, 'falha na sincronização');
-        alert('Não foi possível atualizar os dados do Supabase. Verifique a conexão.');
+        const erroCurto = String(e && e.message ? e.message : e).replace(/\s+/g, ' ').slice(0, 180);
+        atualizarStatusConexao(false, erroCurto || 'falha na sincronização');
+        alert('Supabase: ' + (erroCurto || 'falha na sincronização'));
       } finally {
         if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-rotate"></i>'; }
       }
@@ -1214,10 +1353,27 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(solicitacoes));
     }
 
-    function atualizarDataEsteiraAuto() {
+    function obterDataHojeBR() {
       const agora = new Date();
-      const strData = agora.toISOString().slice(0, 10) + ' ' + agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-      document.getElementById('field-inicio-esteira').value = strData;
+      return String(agora.getDate()).padStart(2, '0') + '/' + String(agora.getMonth() + 1).padStart(2, '0') + '/' + agora.getFullYear();
+    }
+
+    function obterMesEntradaAutomatico() {
+      const agora = new Date();
+      return agora.getFullYear() + '-' + String(agora.getMonth() + 1).padStart(2, '0');
+    }
+
+    function obterMesAnoEntradaBR() {
+      const agora = new Date();
+      const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+      return meses[agora.getMonth()] + ' de ' + agora.getFullYear();
+    }
+
+    function atualizarDataEsteiraAuto() {
+      const inicio = document.getElementById('field-inicio-esteira');
+      const mesAno = document.getElementById('field-mes-entrada');
+      if (inicio) inicio.value = obterDataHojeBR();
+      if (mesAno) mesAno.value = obterMesAnoEntradaBR();
     }
 
     // LOGIN & AUTENTICAÇÃO
@@ -1305,8 +1461,8 @@
       const nova = {
         id: 'SOL-' + Date.now().toString(36).toUpperCase() + '-' + Math.floor(100 + Math.random() * 900),
         inicioEsteira: document.getElementById('field-inicio-esteira').value,
-        mesEntrada: document.getElementById('field-mes-entrada').value,
-        cdMes: document.getElementById('field-cd-mes').value,
+        mesEntrada: obterMesEntradaAutomatico(),
+        cdMes: '',
         previsaoInicio: document.getElementById('field-previsao-inicio').value,
         tipoSolicitacao: document.getElementById('field-tipo-solicitacao').value,
         urgente: document.getElementById('field-urgente').value,
@@ -1651,9 +1807,9 @@
       document.getElementById('trat-login').value = item.login || '';
       document.getElementById('trat-login-redearya').value = item.loginRedeArya || '';
       document.getElementById('trat-treinamento').value = item.treinamento || 'Pendente';
-      document.getElementById('trat-data-treinamento').value = item.dataTreinamento || '';
+      document.getElementById('trat-data-treinamento').value = formatarDataBR(item.dataTreinamento || '');
       document.getElementById('trat-agenda').value = item.agenda || '';
-      document.getElementById('trat-inicio-agenda').value = item.inicioAgenda || '';
+      document.getElementById('trat-inicio-agenda').value = formatarDataBR(item.inicioAgenda || '');
       document.getElementById('trat-op-responsavel').value = item.opResponsavel || '';
       document.getElementById('trat-status-final').value = item.statusFinal || 'Pendente';
       document.getElementById('trat-observacao').value = item.observacao || '';
