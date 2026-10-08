@@ -246,11 +246,11 @@
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Operadora (Banco) *</label>
                 <select id="field-operadora" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none bg-white">
                   <option value="">Selecione...</option>
-                  <option>HAPVIDA</option>
-                  <option>CCG</option>
-                  <option>CLINIPAM</option>
-                  <option>NDI SP</option>
-                  <option>NDI MG</option>
+                  <option>CENTRO CLÍNICO GAUCHO LTDA</option>
+                  <option>CLINIPAM CLINICA PARANAENSE DE ASSISTENCIA LTDA</option>
+                  <option>HAPVIDA ASSISTENCIA MEDICA S.A.</option>
+                  <option>NOTRE DAME INTERMEDICA MINAS GERAIS S A</option>
+                  <option>(SP/RJ) NOTRE DAME INTERMÉDICA SAÚDE S A</option>
                 </select>
               </div>
               <div>
@@ -431,8 +431,45 @@
         </div>
       </section>
 
+      <!-- ABA: DASH & ACOMPANHAMENTO -->
+      <section id="tab-acompanhamento" class="hidden space-y-6 animate-fade-in">
+        <div class="border-b border-slate-200 pb-4">
+          <h2 class="text-2xl font-bold text-slate-900">Dash & Acompanhamento</h2>
+          <p class="text-sm text-slate-500">Consulte o andamento do médico na esteira e acompanhe as atualizações realizadas pela equipe de tratativa.</p>
+        </div>
+
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Pesquisar médico / CD Pessoa / CPF / protocolo</label>
+              <input id="acompanhamento-busca" type="text" oninput="renderAcompanhamento()" placeholder="Digite o médico, CD Pessoa, CPF ou protocolo" class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Estado</label>
+              <select id="acompanhamento-estado" onchange="renderAcompanhamento()" class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none"><option value="TODOS">Todos os Estados</option></select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Nome do Solicitante</label>
+              <select id="acompanhamento-solicitante" onchange="renderAcompanhamento()" class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none"><option value="TODOS">Todos os Solicitantes</option></select>
+            </div>
+          </div>
+          <div class="flex justify-end">
+            <button type="button" onclick="limparAcompanhamento()" class="px-4 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50">Limpar filtros</button>
+          </div>
+          <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
+            <div class="rounded-xl bg-slate-50 border border-slate-200 p-3"><p class="text-[10px] text-slate-500">Solicitações</p><p id="acomp-kpi-total" class="text-xl font-bold text-slate-800">0</p></div>
+            <div class="rounded-xl bg-blue-50 border border-blue-100 p-3"><p class="text-[10px] text-blue-600">Triagem e Entrada</p><p id="acomp-kpi-triagem" class="text-xl font-bold text-blue-700">0</p></div>
+            <div class="rounded-xl bg-indigo-50 border border-indigo-100 p-3"><p class="text-[10px] text-indigo-600">Acessos</p><p id="acomp-kpi-acessos" class="text-xl font-bold text-indigo-700">0</p></div>
+            <div class="rounded-xl bg-amber-50 border border-amber-100 p-3"><p class="text-[10px] text-amber-600">Treinamento</p><p id="acomp-kpi-treinamento" class="text-xl font-bold text-amber-700">0</p></div>
+            <div class="rounded-xl bg-emerald-50 border border-emerald-100 p-3"><p class="text-[10px] text-emerald-600">Concluído e Liberado</p><p id="acomp-kpi-concluido" class="text-xl font-bold text-emerald-700">0</p></div>
+          </div>
+        </div>
+
+        <div id="acompanhamento-lista" class="space-y-4"></div>
+      </section>
+
       <!-- ABA 3: DASHBOARD GERAL E INSIGHTS -->
-      <section id="tab-dashboard" class="hidden space-y-6 animate-fade-in">
+      <section id="tab-dashboard" data-admin-only="true" class="hidden space-y-6 animate-fade-in">
         <div class="border-b border-slate-200 pb-4">
           <h2 class="text-2xl font-bold text-slate-900">Dashboard Geral & Insights da Esteira</h2>
           <p class="text-sm text-slate-500">Métricas consolidadas de volumes, status, prazos e gargalos de credenciamento.</p>
@@ -454,7 +491,7 @@
           </div>
 
           <!-- STEPPER DA LINHA DO TEMPO -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 relative">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 relative">
 
             <!-- FASE 1 -->
             <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col justify-between relative group hover:border-brand-400 transition-all">
@@ -463,7 +500,7 @@
                   <span class="w-8 h-8 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold">1</span>
                   <span id="fase1-pct" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">0%</span>
                 </div>
-                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">1. Triagem & Entrada</h4>
+                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">1. Triagem e Entrada</h4>
                 <p class="text-[11px] text-slate-500 mt-0.5">Aguardando início de tratativa</p>
               </div>
               <div class="mt-4 pt-3 border-t border-slate-200/80 flex items-end justify-between">
@@ -484,7 +521,7 @@
                   <span class="w-8 h-8 rounded-xl bg-blue-500 text-white flex items-center justify-center text-xs font-bold">2</span>
                   <span id="fase2-pct" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-200 text-blue-800">0%</span>
                 </div>
-                <h4 class="text-xs font-bold text-blue-900 uppercase tracking-wider">2. Acessos & ARYA</h4>
+                <h4 class="text-xs font-bold text-blue-900 uppercase tracking-wider">2. Acessos</h4>
                 <p class="text-[11px] text-blue-600 mt-0.5">Criando logins / ARYA</p>
               </div>
               <div class="mt-4 pt-3 border-t border-blue-200/80 flex items-end justify-between">
@@ -526,8 +563,8 @@
                   <span class="w-8 h-8 rounded-xl bg-purple-500 text-white flex items-center justify-center text-xs font-bold">4</span>
                   <span id="fase4-pct" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-200 text-purple-800">0%</span>
                 </div>
-                <h4 class="text-xs font-bold text-purple-900 uppercase tracking-wider">4. Abertura Agenda</h4>
-                <p class="text-[11px] text-purple-600 mt-0.5">Início de agenda em validação</p>
+                <h4 class="text-xs font-bold text-purple-900 uppercase tracking-wider">4. Concluído e Liberado</h4>
+                <p class="text-[11px] text-purple-600 mt-0.5">Pronto para atendimento</p>
               </div>
               <div class="mt-4 pt-3 border-t border-purple-200/80 flex items-end justify-between">
                 <div>
@@ -539,28 +576,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- FASE 5 -->
-            <div class="bg-emerald-50/60 border border-emerald-200 rounded-2xl p-4 flex flex-col justify-between relative group hover:border-emerald-400 transition-all">
-              <div>
-                <div class="flex items-center justify-between mb-2">
-                  <span class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xs font-bold"><i class="fa-solid fa-check"></i></span>
-                  <span id="fase5-pct" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-800">0%</span>
-                </div>
-                <h4 class="text-xs font-bold text-emerald-900 uppercase tracking-wider">5. Concluído & Liberado</h4>
-                <p class="text-[11px] text-emerald-600 mt-0.5">Pronto para atendimento</p>
-              </div>
-              <div class="mt-4 pt-3 border-t border-emerald-200/80 flex items-end justify-between">
-                <div>
-                  <p id="fase5-count" class="text-2xl font-black text-emerald-700">0</p>
-                  <p class="text-[10px] text-emerald-600 font-medium">prestadores</p>
-                </div>
-                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-sm">
-                  <i class="fa-solid fa-user-check"></i>
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
 
@@ -667,7 +682,7 @@
       </section>
 
       <!-- ABA 4: TRATATIVA SLA DA ESTEIRA (RECEPTIVO / ADMIN) -->
-      <section id="tab-receptivo" class="hidden space-y-6 animate-fade-in">
+      <section id="tab-receptivo" data-admin-only="true" class="hidden space-y-6 animate-fade-in">
 
         <!-- TELA DE BLOQUEIO POR SENHA -->
         <div id="admin-lock-screen" class="bg-white rounded-3xl p-8 max-w-md mx-auto text-center border border-slate-200 shadow-xl space-y-5 my-10">
@@ -946,12 +961,17 @@
           <span class="text-[10px] font-medium">Status</span>
         </button>
 
-        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-600 px-3 py-1 rounded-xl transition-all">
+        <button onclick="switchTab('acompanhamento')" id="nav-acompanhamento" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-600 px-3 py-1 rounded-xl transition-all">
+          <i class="fa-solid fa-route text-lg"></i>
+          <span class="text-[10px] font-medium">Acompanhamento</span>
+        </button>
+
+        <button onclick="switchTab('dashboard')" id="nav-dashboard" data-admin-only="true" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-600 px-3 py-1 rounded-xl transition-all">
           <i class="fa-solid fa-chart-line text-lg"></i>
           <span class="text-[10px] font-medium">Dashboard</span>
         </button>
 
-        <button onclick="switchTab('receptivo')" id="nav-receptivo" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-600 px-3 py-1 rounded-xl transition-all">
+        <button onclick="switchTab('receptivo')" id="nav-receptivo" data-admin-only="true" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-600 px-3 py-1 rounded-xl transition-all">
           <i class="fa-solid fa-stopwatch text-lg"></i>
           <span class="text-[10px] font-medium">SLA Esteira</span>
         </button>
@@ -1420,7 +1440,7 @@
       document.querySelectorAll('[data-admin-only="true"]').forEach(el => {
         if (adminAutenticado) {
           el.classList.remove('hidden');
-          el.classList.add('inline-flex');
+          if (el.dataset.displayInline === 'true') el.classList.add('inline-flex');
         } else {
           el.classList.remove('inline-flex');
           el.classList.add('hidden');
@@ -1466,7 +1486,10 @@
     }
 
     function switchTab(tabName) {
-      const tabs = ['form', 'status', 'dashboard', 'receptivo'];
+      if ((tabName === 'receptivo' || tabName === 'dashboard') && !adminAutenticado) {
+        tabName = 'acompanhamento';
+      }
+      const tabs = ['form', 'status', 'acompanhamento', 'dashboard', 'receptivo'];
       tabs.forEach(t => {
         document.getElementById(`tab-${t}`).classList.add('hidden');
         const btn = document.getElementById(`nav-${t}`);
@@ -1484,6 +1507,7 @@
       }
 
       if (tabName === 'status') renderTabelaStatus();
+      if (tabName === 'acompanhamento') renderAcompanhamento();
       if (tabName === 'dashboard') renderDashboard();
       if (tabName === 'receptivo') renderReceptivoArea();
     }
@@ -2064,6 +2088,158 @@
       }
     }
 
+    // DASH & ACOMPANHAMENTO DO SOLICITANTE
+    function statusTreinamentoConcluido(treinamento) {
+      const tr = String(treinamento || '').trim().toUpperCase();
+      return ['REALIZADO','EAD','CONHECE O SISTEMA','N|A ESPECIALIDADE'].includes(tr);
+    }
+    function temAcessoLiberado(item) {
+      return !!(String(item.login || '').trim() || String(item.loginRedeArya || '').trim() || String(item.loginArya || '').trim());
+    }
+    function statusFinalConcluido(item) {
+      const sf = normalizarStatusFinal(item?.statusFinal);
+      return sf === 'LIBERADO' || sf === 'CONCLUÍDO';
+    }
+
+    function estadoEtapasAcompanhamento(item) {
+      const tr = String(item?.treinamento || '').trim().toUpperCase();
+      const acesso = temAcessoLiberado(item);
+      const treinamentoConcluido = statusTreinamentoConcluido(tr);
+      const finalConcluido = statusFinalConcluido(item);
+
+      return {
+        triagem: true,
+        acessos: acesso,
+        treinamento: treinamentoConcluido,
+        concluido: finalConcluido
+      };
+    }
+
+    function etapaAcompanhamento(item) {
+      const sf = normalizarStatusFinal(item.statusFinal);
+      const estados = estadoEtapasAcompanhamento(item);
+
+      if (sf === 'CANCELADO|DESISTENCIA DO PRESTADOR') return 'Cancelado';
+
+      // A etapa atual é sempre o primeiro marco ainda pendente.
+      // Assim, um treinamento realizado continua marcado como concluído
+      // mesmo que os acessos ainda estejam pendentes.
+      if (!estados.acessos) return 'Acessos';
+      if (!estados.treinamento) return 'Treinamento';
+      if (!estados.concluido) return 'Concluído e Liberado';
+      return 'Concluído e Liberado';
+    }
+    function etapaDescricaoAcompanhamento(etapa, item) {
+      const tr = String(item?.treinamento || '').trim().toUpperCase();
+      const acesso = item ? temAcessoLiberado(item) : false;
+      const map = {
+        'Triagem e Entrada': 'Solicitação recebida e em triagem inicial.',
+        'Acessos': tr ? `Acesso pendente. Treinamento já registrado como ${item.treinamento} e permanece concluído na linha do tempo.` : 'Solicitação em etapa de criação/liberação dos acessos.',
+        'Treinamento': acesso ? 'Acessos já liberados e solicitação em etapa de treinamento.' : 'Treinamento já registrado, mas os acessos ainda estão pendentes.',
+        'Concluído e Liberado': acesso && statusTreinamentoConcluido(tr) ? 'Acessos e treinamento concluídos. Esteira concluída.' : 'Aguardando a conclusão/liberação final da esteira.',
+        'Cancelado': 'Solicitação cancelada/desistência do prestador.'
+      };
+      return map[etapa] || 'Solicitação em acompanhamento.';
+    }
+    function popularFiltrosAcompanhamento() {
+      const estadoSelect = document.getElementById('acompanhamento-estado');
+      const solicitanteSelect = document.getElementById('acompanhamento-solicitante');
+      if (!estadoSelect || !solicitanteSelect) return;
+      const estadoAtual = estadoSelect.value || 'TODOS';
+      const solicitanteAtual = solicitanteSelect.value || 'TODOS';
+      const estados = [...new Set(solicitacoes.map(s => String(s.estado || '').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+      const solicitantes = [...new Set(solicitacoes.map(s => String(s.nomeSolicitante || '').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+      estadoSelect.innerHTML = '<option value="TODOS">Todos os Estados</option>' + estados.map(v => `<option value="${v.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}">${v}</option>`).join('');
+      solicitanteSelect.innerHTML = '<option value="TODOS">Todos os Solicitantes</option>' + solicitantes.map(v => `<option value="${v.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}">${v}</option>`).join('');
+      if ([...estadoSelect.options].some(o=>o.value===estadoAtual)) estadoSelect.value=estadoAtual;
+      if ([...solicitanteSelect.options].some(o=>o.value===solicitanteAtual)) solicitanteSelect.value=solicitanteAtual;
+    }
+
+    function renderAcompanhamento() {
+      const lista = document.getElementById('acompanhamento-lista');
+      if (!lista) return;
+      popularFiltrosAcompanhamento();
+      const termo = String(document.getElementById('acompanhamento-busca')?.value || '').trim().toLowerCase();
+      const estado = String(document.getElementById('acompanhamento-estado')?.value || 'TODOS');
+      const solicitante = String(document.getElementById('acompanhamento-solicitante')?.value || 'TODOS');
+      const campos = ['nomeMedico','cdPessoa','cpf','id','nomeUnidade'];
+      const filtrados = solicitacoes.filter(item => {
+        const bateTexto = !termo || campos.some(c => String(item[c] || '').toLowerCase().includes(termo));
+        const bateEstado = estado === 'TODOS' || String(item.estado || '').trim() === estado;
+        const bateSolicitante = solicitante === 'TODOS' || String(item.nomeSolicitante || '').trim() === solicitante;
+        return bateTexto && bateEstado && bateSolicitante;
+      });
+
+      const contagem = {'Triagem e Entrada':0,'Acessos':0,'Treinamento':0,'Concluído e Liberado':0};
+      filtrados.forEach(i => { const e=etapaAcompanhamento(i); if (contagem[e] !== undefined) contagem[e]++; });
+      document.getElementById('acomp-kpi-total').textContent = filtrados.length;
+      document.getElementById('acomp-kpi-triagem').textContent = contagem['Triagem e Entrada'];
+      document.getElementById('acomp-kpi-acessos').textContent = contagem['Acessos'];
+      document.getElementById('acomp-kpi-treinamento').textContent = contagem['Treinamento'];
+      document.getElementById('acomp-kpi-concluido').textContent = contagem['Concluído e Liberado'];
+
+      if (!filtrados.length) {
+        lista.innerHTML = `<div class="bg-white rounded-2xl border border-slate-200 p-8 text-center text-sm text-slate-500">Nenhuma solicitação encontrada. Pesquise pelo nome do médico, CD Pessoa, CPF ou protocolo.</div>`;
+        return;
+      }
+
+      lista.innerHTML = filtrados.map(item => {
+        const etapa = etapaAcompanhamento(item);
+        const sf = normalizarStatusFinal(item.statusFinal);
+        const treinamento = item.treinamento || 'Não informado';
+        const tentativas = Number(item.tentativasTreinamento || extrairMetaTratativa(item.observacao).tentativasTreinamento || 0);
+        const operador = item.opResponsavel || 'Não informado';
+        const sla = calcularDiasEsteira(item);
+        const estados = estadoEtapasAcompanhamento(item);
+        const etapas = ['Triagem e Entrada','Acessos','Treinamento','Concluído e Liberado'];
+        const concluida = [estados.triagem, estados.acessos, estados.treinamento, estados.concluido];
+        const etapaAtualIndex = etapa === 'Cancelado'
+          ? -1
+          : ['Triagem e Entrada','Acessos','Treinamento','Concluído e Liberado'].indexOf(etapa);
+
+        const stepHtml = etapas.map((e, idx) => {
+          const ativo = concluida[idx] && etapa !== 'Cancelado';
+          const atual = idx === etapaAtualIndex && etapa !== 'Concluído e Liberado' && etapa !== 'Cancelado';
+          const classeBarra = ativo ? 'bg-brand-600' : 'bg-slate-200';
+          const classeTexto = ativo ? 'text-brand-700 font-bold' : (atual ? 'text-blue-700 font-bold' : 'text-slate-400');
+          return `<div class="flex-1 ${idx < etapas.length-1 ? 'mr-1' : ''}">
+            <div class="h-2 rounded-full ${classeBarra}"></div>
+            <p class="text-[9px] mt-1 ${classeTexto}">${e}${atual ? ' · PENDENTE' : ''}</p>
+          </div>`;
+        }).join('');
+        return `<div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+          <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+            <div><h3 class="font-bold text-slate-900">${item.nomeMedico || 'Médico não informado'}</h3><p class="text-xs text-slate-500">CD Pessoa: ${item.cdPessoa || '-'} · Protocolo: ${item.id || '-'}</p></div>
+            <span class="px-3 py-1 rounded-full text-xs font-bold ${etapa==='Concluído e Liberado'?'bg-emerald-100 text-emerald-700':etapa==='Cancelado'?'bg-rose-100 text-rose-700':'bg-blue-100 text-blue-700'}">${etapa}</span>
+          </div>
+          <div class="flex items-center gap-1">${stepHtml}</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+            <div><p class="text-slate-400">Banco</p><p class="font-semibold text-slate-700">${item.operadora || '-'}</p></div>
+            <div><p class="text-slate-400">Unidade</p><p class="font-semibold text-slate-700">${item.nomeUnidade || '-'}</p></div>
+            <div><p class="text-slate-400">Status Final</p><p class="font-semibold text-slate-700">${sf}</p></div>
+            <div><p class="text-slate-400">Treinamento</p><p class="font-semibold text-slate-700">${treinamento}</p></div>
+            <div><p class="text-slate-400">Op. Responsável</p><p class="font-semibold text-slate-700">${operador}</p></div>
+          </div>
+          <div class="flex flex-wrap gap-2 text-[11px] text-slate-500 border-t border-slate-100 pt-3">
+            <span><i class="fa-solid fa-clock mr-1"></i>${sla} dias na esteira</span>
+            <span><i class="fa-solid fa-phone mr-1"></i>${tentativas} tentativa(s) de contato</span>
+            ${item.dataTreinamento ? `<span><i class="fa-solid fa-calendar-check mr-1"></i>Treinamento: ${formatarDataBR(item.dataTreinamento)}</span>` : ''}
+          </div>
+          <p class="text-xs text-slate-500 bg-slate-50 rounded-xl p-3"><strong>Etapa atual:</strong> ${etapaDescricaoAcompanhamento(etapa, item)}</p>
+        </div>`;
+      }).join('');
+    }
+
+    function limparAcompanhamento() {
+      const input = document.getElementById('acompanhamento-busca');
+      const estado = document.getElementById('acompanhamento-estado');
+      const solicitante = document.getElementById('acompanhamento-solicitante');
+      if (input) input.value = '';
+      if (estado) estado.value = 'TODOS';
+      if (solicitante) solicitante.value = 'TODOS';
+      renderAcompanhamento();
+    }
+
     // DASHBOARD E INSIGHTS
     function renderDashboard() {
       const total = solicitacoes.length;
@@ -2071,46 +2247,26 @@
       const pendentes = solicitacoes.filter(s => normalizarStatusFinal(s.statusFinal) === 'PENDENTE DE TREINAMENTO' || normalizarStatusFinal(s.statusFinal) === 'EM TRATATIVA').length;
       const cancelados = solicitacoes.filter(s => normalizarStatusFinal(s.statusFinal) === 'CANCELADO|DESISTENCIA DO PRESTADOR').length;
 
-      // CÁLCULO DA LINHA DO TEMPO (PRESTADORES POR FASE)
-      let f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0;
-
+      // CÁLCULO DA LINHA DO TEMPO (4 FASES)
+      let f1 = 0, f2 = 0, f3 = 0, f4 = 0;
       solicitacoes.forEach(s => {
-        if (normalizarStatusFinal(s.statusFinal) === 'LIBERADO') {
-          f5++;
-        } else if (normalizarStatusFinal(s.statusFinal) === 'CANCELADO|DESISTENCIA DO PRESTADOR') {
-          // não contabiliza no pipeline ativo
-        } else if (normalizarStatusFinal(s.statusFinal) === 'EM TRATATIVA') {
-          if (s.inicioAgenda || s.agenda === 'Liberada') {
-            f4++;
-          } else if (s.treinamento === 'Agendado' || s.treinamento === 'Concluído') {
-            f3++;
-          } else if (s.login || s.loginRedeArya) {
-            f2++;
-          } else {
-            f1++;
-          }
-        } else {
-          // Status Pendente
-          f1++;
-        }
+        const etapa = etapaAcompanhamento(s);
+        if (etapa === 'Concluído e Liberado') f4++;
+        else if (etapa === 'Treinamento') f3++;
+        else if (etapa === 'Acessos') f2++;
+        else if (etapa === 'Triagem e Entrada') f1++;
       });
 
       const calcPct = (val) => total ? Math.round((val / total) * 100) : 0;
 
       document.getElementById('fase1-count').textContent = f1;
       document.getElementById('fase1-pct').textContent = `${calcPct(f1)}%`;
-
       document.getElementById('fase2-count').textContent = f2;
       document.getElementById('fase2-pct').textContent = `${calcPct(f2)}%`;
-
       document.getElementById('fase3-count').textContent = f3;
       document.getElementById('fase3-pct').textContent = `${calcPct(f3)}%`;
-
       document.getElementById('fase4-count').textContent = f4;
       document.getElementById('fase4-pct').textContent = `${calcPct(f4)}%`;
-
-      document.getElementById('fase5-count').textContent = f5;
-      document.getElementById('fase5-pct').textContent = `${calcPct(f5)}%`;
 
       // Taxa no SLA (<= 5 dias)
       const noSlaCount = solicitacoes.filter(s => calcularDiasEsteira(s) <= 5).length;
@@ -2181,7 +2337,7 @@
       chartSlaEtapasInstance = new Chart(ctxSla, {
         type: 'bar',
         data: {
-          labels: ['Triagem/Entrada', 'Validação ARYA', 'Treinamento', 'Abertura Agenda'],
+          labels: ['Triagem e Entrada', 'Acessos', 'Treinamento', 'Concluído e Liberado'],
           datasets: [
             {
               label: 'Realizado (Dias)',
