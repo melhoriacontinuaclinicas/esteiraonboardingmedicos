@@ -137,10 +137,10 @@
         </div>
 
         <div class="flex items-center gap-2">
-          <span id="supabase-status" class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">
+          <span id="supabase-status" data-admin-only="true" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">
             <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Conectando...
           </span>
-          <button id="btn-sync" onclick="sincronizarAgora()" title="Atualizar dados do Supabase" class="p-2 text-slate-300 hover:text-white hover:bg-brand-800 rounded-xl transition-all">
+          <button id="btn-sync" data-admin-only="true" onclick="sincronizarAgora()" title="Atualizar dados do Supabase" class="p-2 text-slate-300 hover:text-white hover:bg-brand-800 rounded-xl transition-all">
             <i class="fa-solid fa-rotate text-sm"></i>
           </button>
           <span id="role-tag" class="inline-block px-3 py-1 text-xs rounded-full bg-brand-800 text-brand-200 font-semibold border border-brand-700">
@@ -163,7 +163,7 @@
           <div>
             <h2 class="text-2xl font-bold text-slate-900">Solicitação de Novo Prestador</h2>
             <p class="text-sm text-slate-500">Preencha o questionário completo para dar início à esteira de onboarding.</p>
-            <p class="text-[11px] text-slate-400 mt-1">Os dados são gravados centralmente no Supabase e utilizados pelo Status, Dashboard e SLA.</p>
+            <p id="supabase-info" data-admin-only="true" class="text-[11px] text-slate-400 mt-1">Os dados são gravados centralmente no Supabase e utilizados pelo Status, Dashboard e SLA.</p>
           </div>
           <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-semibold w-fit">
             <i class="fa-solid fa-bolt"></i> Esteira Automática Ativa
@@ -1274,6 +1274,15 @@
       supabaseOnline = online;
       const el = document.getElementById('supabase-status');
       if (!el) return;
+
+      // O status do Supabase é informação exclusiva do Administrador.
+      // Funções de sincronização podem chamar esta rotina antes/depois do login,
+      // portanto nunca removemos o "hidden" quando o perfil é Solicitante.
+      if (!adminAutenticado) {
+        el.classList.add('hidden');
+        return;
+      }
+
       el.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold ' +
         (online ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700');
       el.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' + (online ? 'bg-emerald-500' : 'bg-rose-500') + '"></span>' +
@@ -1376,6 +1385,21 @@
       if (mesAno) mesAno.value = obterMesAnoEntradaBR();
     }
 
+    // CONTROLES VISÍVEIS POR PERFIL
+    // Solicitante não vê status/conexão/controles técnicos do Supabase.
+    // Administrador vê esses controles normalmente.
+    function aplicarVisibilidadePorPerfil() {
+      document.querySelectorAll('[data-admin-only="true"]').forEach(el => {
+        if (adminAutenticado) {
+          el.classList.remove('hidden');
+          el.classList.add('inline-flex');
+        } else {
+          el.classList.remove('inline-flex');
+          el.classList.add('hidden');
+        }
+      });
+    }
+
     // LOGIN & AUTENTICAÇÃO
     function handleLogin(e) {
       e.preventDefault();
@@ -1395,10 +1419,12 @@
         adminAutenticado = true;
         document.getElementById('role-tag').textContent = "Perfil: Admin SLA";
         document.getElementById('user-badge').innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span> Admin Receptivo Conectado';
+        aplicarVisibilidadePorPerfil();
       } else {
         adminAutenticado = false;
         document.getElementById('role-tag').textContent = "Perfil: Solicitante";
         document.getElementById('user-badge').innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-blue-400"></span> Solicitante Conectado';
+        aplicarVisibilidadePorPerfil();
       }
     }
 
@@ -1406,6 +1432,7 @@
       document.getElementById('screen-login').classList.remove('hidden');
       document.getElementById('app-container').classList.add('hidden');
       adminAutenticado = false;
+      aplicarVisibilidadePorPerfil();
       document.getElementById('admin-lock-screen').classList.remove('hidden');
       document.getElementById('admin-panel').classList.add('hidden');
     }
