@@ -271,6 +271,7 @@
               <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">CD Pessoa do Médico *</label>
                 <input type="text" id="field-cd-pessoa" placeholder="Informe o CD Pessoa" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+                <p class="text-[10px] text-slate-400 mt-1">O sistema verifica automaticamente se o CD Pessoa já consta na base.</p>
               </div>
               <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">CPF do Prestador *</label>
@@ -332,7 +333,7 @@
               <i class="fa-solid fa-building-user"></i> Unidade & Dados do Solicitante
             </h3>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Nome da Unidade de Atendimento *</label>
                 <input type="text" id="field-nome-unidade" placeholder="Ex: Unidade Central Alfa" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
@@ -340,6 +341,10 @@
               <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Unidade de Atendimento *</label>
                 <input type="text" id="field-cd-local" placeholder="Informe a unidade de atendimento" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Coordenador da Unidade *</label>
+                <input type="text" id="field-coordenador-unidade" placeholder="Nome do coordenador da unidade" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
               </div>
             </div>
 
@@ -746,7 +751,7 @@
               <button onclick="limparFiltrosSLA()" class="text-xs text-brand-600 hover:underline">Limpar Filtros</button>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
               <div>
                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">Palavra-chave / Médico / CPF</label>
                 <input type="text" id="sla-filter-search" oninput="renderTabelaSLA()" placeholder="Digite nome, CPF ou protocolo..." 
@@ -754,13 +759,28 @@
               </div>
 
               <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Banco</label>
+                <select id="sla-filter-banco" onchange="renderTabelaSLA()" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                  <option value="TODOS">Todos os Bancos</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Op. Responsável</label>
+                <select id="sla-filter-op-responsavel" onchange="renderTabelaSLA()" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                  <option value="TODOS">Todos os Operadores</option>
+                </select>
+              </div>
+
+              <div>
                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">Status Final / Tratativa</label>
                 <select id="sla-filter-status" onchange="renderTabelaSLA()" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white focus:ring-2 focus:ring-brand-500 outline-none">
                   <option value="TODOS">Todos os Status</option>
-                  <option value="Pendente">Pendente</option>
-                  <option value="Em Tratativa">Em Tratativa</option>
-                  <option value="Liberado">Liberado / Concluído</option>
-                  <option value="Cancelado">Cancelado</option>
+                  <option value="EM TRATATIVA">EM TRATATIVA</option>
+                  <option value="CANCELADO|DESISTENCIA DO PRESTADOR">CANCELADO|DESISTENCIA DO PRESTADOR</option>
+                  <option value="LIBERADO">LIBERADO</option>
+                  <option value="CONCLUÍDO">CONCLUÍDO</option>
+                  <option value="PENDENTE DE TREINAMENTO">PENDENTE DE TREINAMENTO</option>
                 </select>
               </div>
 
@@ -791,7 +811,7 @@
                     <th class="py-3 px-3">Médico / Especialidade</th>
                     <th class="py-3 px-3">Início Esteira</th>
                     <th class="py-3 px-3">Tempo / SLA Status</th>
-                    <th class="py-3 px-3">ARYA</th>
+                    <th class="py-3 px-3">LOGIN DE ARYA</th>
                     <th class="py-3 px-3">Op. Resp.</th>
                     <th class="py-3 px-3">Status Tratativa</th>
                     <th class="py-3 px-3 text-center">Ações</th>
@@ -827,14 +847,18 @@
         <form id="form-tratativa" onsubmit="salvarTratativa(event)" class="p-6 space-y-4 overflow-y-auto flex-1 text-xs">
           <input type="hidden" id="tratativa-id" />
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label class="block font-semibold text-slate-700 mb-1">LOGIN PRESTADOR</label>
-              <input type="text" id="trat-login" placeholder="Ex: roberto.medico" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+              <label class="block font-semibold text-slate-700 mb-1">LOGIN DO PRESTADOR</label>
+              <input type="text" id="trat-login" placeholder="Login do prestador" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
             </div>
             <div>
-              <label class="block font-semibold text-slate-700 mb-1">LOGIN REDEARYA</label>
-              <input type="text" id="trat-login-redearya" placeholder="Ex: ARYA_R_MED" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+              <label class="block font-semibold text-slate-700 mb-1">LOGIN DE REDE</label>
+              <input type="text" id="trat-login-redearya" placeholder="Login de rede" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">LOGIN DE ARYA</label>
+              <input type="text" id="trat-login-arya" placeholder="Login de ARYA" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
             </div>
           </div>
 
@@ -842,27 +866,28 @@
             <div>
               <label class="block font-semibold text-slate-700 mb-1">TREINAMENTO</label>
               <select id="trat-treinamento" class="w-full border border-slate-300 rounded-lg p-2 bg-white focus:ring-2 focus:ring-brand-500 outline-none">
-                <option value="Pendente">Pendente</option>
-                <option value="Agendado">Agendado</option>
-                <option value="Concluído">Concluído</option>
-                <option value="Não Necessário">Não Necessário</option>
+                <option value="AGENDADO">AGENDADO</option>
+                <option value="AGUARDANDO RET. MÉDICO">AGUARDANDO RET. MÉDICO</option>
+                <option value="CANCELADO|SEM ATUACAO CRED">CANCELADO|SEM ATUACAO CRED</option>
+                <option value="CONHECE O SISTEMA">CONHECE O SISTEMA</option>
+                <option value="DESISTIU">DESISTIU</option>
+                <option value="DEVOLVIDO AO CRED">DEVOLVIDO AO CRED</option>
+                <option value="EAD">EAD</option>
+                <option value="FALTOU TREINAMENTO">FALTOU TREINAMENTO</option>
+                <option value="N|A ESPECIALIDADE">N|A ESPECIALIDADE</option>
+                <option value="REALIZADO">REALIZADO</option>
+                <option value="TELEFONE ERRADO">TELEFONE ERRADO</option>
               </select>
             </div>
             <div>
-              <label class="block font-semibold text-slate-700 mb-1">DATA DO TREINAMENTO</label>
-              <input type="text" id="trat-data-treinamento" inputmode="numeric" maxlength="10" placeholder="dd/mm/aaaa" autocomplete="off" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
+              <label class="block font-semibold text-slate-700 mb-1">TENTATIVAS DE CONTATO</label>
+              <input type="number" id="trat-tentativas-treinamento" min="0" step="1" placeholder="0" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block font-semibold text-slate-700 mb-1">AGENDA</label>
-              <input type="text" id="trat-agenda" placeholder="Ex: Liberada / Bloco A" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
-            </div>
-            <div>
-              <label class="block font-semibold text-slate-700 mb-1">INÍCIO DA AGENDA</label>
-              <input type="text" id="trat-inicio-agenda" inputmode="numeric" maxlength="10" placeholder="dd/mm/aaaa" autocomplete="off" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
-            </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">DATA DO TREINAMENTO</label>
+            <input type="text" id="trat-data-treinamento" inputmode="numeric" maxlength="10" placeholder="dd/mm/aaaa" autocomplete="off" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-brand-500 outline-none" />
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -873,10 +898,11 @@
             <div>
               <label class="block font-semibold text-slate-700 mb-1">STATUS FINAL *</label>
               <select id="trat-status-final" required class="w-full border border-slate-300 font-semibold rounded-lg p-2 bg-white focus:ring-2 focus:ring-brand-500 outline-none">
-                <option value="Pendente">Pendente</option>
-                <option value="Em Tratativa">Em Tratativa</option>
-                <option value="Liberado">Liberado / Concluído</option>
-                <option value="Cancelado">Cancelado</option>
+                <option value="EM TRATATIVA">EM TRATATIVA</option>
+                <option value="CANCELADO|DESISTENCIA DO PRESTADOR">CANCELADO|DESISTENCIA DO PRESTADOR</option>
+                <option value="LIBERADO">LIBERADO</option>
+                <option value="CONCLUÍDO">CONCLUÍDO</option>
+                <option value="PENDENTE DE TREINAMENTO">PENDENTE DE TREINAMENTO</option>
               </select>
             </div>
           </div>
@@ -1000,7 +1026,7 @@
     }
 
     function prepararCamposDataBR() {
-      ['field-previsao-inicio','field-data-urgente','trat-data-treinamento','trat-inicio-agenda'].forEach(id => {
+      ['field-previsao-inicio','field-data-urgente','trat-data-treinamento'].forEach(id => {
         mascaraDataBR(document.getElementById(id));
       });
     }
@@ -1116,9 +1142,9 @@
         agenda: item.agenda || null,
         inicio_agenda: normalizarDataSupabase(item.inicioAgenda),
         operador_responsavel: item.opResponsavel || null,
-        status: item.statusFinal || 'Pendente',
+        status: normalizarStatusFinal(item.statusFinal),
         area_atual: item.areaAtual || null,
-        status_final: item.statusFinal || 'Pendente',
+        status_final: normalizarStatusFinal(item.statusFinal),
         dias_em_pendente: Number(item.diasEmPendente || 0),
         dias_em_tratativa: Number(item.diasEmTratativa || 0),
         observacao: item.observacao || null
@@ -1160,11 +1186,13 @@
         login: row.login || '',
         loginRedeArya: row.login_rede || '',
         treinamento: row.treinamento || '',
+        tentativasTreinamento: extrairMetaTratativa(row.observacao).tentativasTreinamento,
+        loginArya: extrairMetaTratativa(row.observacao).loginArya,
         dataTreinamento: normalizarDataSupabase(row.data_treinamento) || '',
         agenda: row.agenda || '',
         inicioAgenda: normalizarDataSupabase(row.inicio_agenda) || '',
         opResponsavel: row.operador_responsavel || '',
-        statusFinal: row.status_final || row.status || 'Pendente',
+        statusFinal: normalizarStatusFinal(row.status_final || row.status || 'Pendente'),
         areaAtual: row.area_atual || '',
         observacao: row.observacao || ''
       };
@@ -1479,9 +1507,60 @@
       e.preventDefault();
 
       const cdPessoaInformado = document.getElementById('field-cd-pessoa').value.trim();
-      const duplicada = solicitacoes.find(s => String(s.cdPessoa || '').trim() === cdPessoaInformado);
-      if (duplicada) {
-        alert('Não foi possível enviar: já existe uma solicitação para este CD Pessoa (' + cdPessoaInformado + '). Protocolo existente: ' + duplicada.id);
+
+      if (!cdPessoaInformado) {
+        alert('Informe o CD Pessoa do Médico.');
+        document.getElementById('field-cd-pessoa').focus();
+        return;
+      }
+
+      // 1) Verificação local imediata.
+      const duplicadaLocal = solicitacoes.find(
+        s => String(s.cdPessoa || '').trim().toLowerCase() === cdPessoaInformado.toLowerCase()
+      );
+
+      if (duplicadaLocal) {
+        alert(
+          'MÉDICO JÁ CONSTA NA BASE DE MÉDICOS.\n\n' +
+          'O CD Pessoa ' + cdPessoaInformado + ' já possui cadastro/solicitação.\n\n' +
+          'Entre em contato com o Núcleo de Apoio aos Médicos para analisar a solicitação.\n\n' +
+          'O cadastro não será enviado.'
+        );
+        document.getElementById('field-cd-pessoa').focus();
+        return;
+      }
+
+      // 2) Verificação diretamente no Supabase antes de gravar.
+      // Assim, mesmo que outro solicitante já tenha cadastrado o médico,
+      // o segundo cadastro é bloqueado.
+      try {
+        const existentesSupabase = await supabaseRequest(
+          SUPABASE_TABLE +
+          '?select=id,codigo_solicitacao,nome_medico,cd_pessoa_medico' +
+          '&cd_pessoa_medico=eq.' + encodeURIComponent(cdPessoaInformado) +
+          '&limit=1'
+        );
+
+        if (Array.isArray(existentesSupabase) && existentesSupabase.length > 0) {
+          const existente = existentesSupabase[0];
+          alert(
+            'MÉDICO JÁ CONSTA NA BASE DE MÉDICOS.\n\n' +
+            'O CD Pessoa ' + cdPessoaInformado + ' já está cadastrado na base' +
+            (existente.nome_medico ? ' para o médico ' + existente.nome_medico : '') + '.\n\n' +
+            'Entre em contato com o Núcleo de Apoio aos Médicos para analisar a solicitação.\n\n' +
+            'O cadastro não será enviado.'
+          );
+          document.getElementById('field-cd-pessoa').focus();
+          return;
+        }
+      } catch (erroDuplicidade) {
+        console.error('Falha na consulta de duplicidade:', erroDuplicidade);
+        atualizarStatusConexao(false, 'não foi possível validar o CD Pessoa');
+        alert(
+          'Não foi possível validar se o CD Pessoa já existe na base de médicos.\n\n' +
+          'Por segurança, a solicitação não será enviada.\n\n' +
+          'Tente novamente em instantes.'
+        );
         return;
       }
 
@@ -1508,6 +1587,7 @@
         emailPrestador: document.getElementById('field-email-prestador').value,
         nomeUnidade: document.getElementById('field-nome-unidade').value,
         cdLocal: document.getElementById('field-cd-local').value,
+        coordenadorUnidade: document.getElementById('field-coordenador-unidade').value.trim(),
         nomeSolicitante: document.getElementById('field-nome-solicitante').value,
         areaSolicitante: document.getElementById('field-area-solicitante').value,
         emailRetorno: document.getElementById('field-email-retorno').value,
@@ -1517,13 +1597,14 @@
         diasEmTratativa: 0,
         login: '',
         loginRedeArya: '',
-        treinamento: 'Pendente',
+        treinamento: 'AGUARDANDO RET. MÉDICO',
         dataTreinamento: '',
         agenda: '',
         inicioAgenda: '',
         opResponsavel: 'Aguardando Atribuição',
         statusFinal: 'Pendente',
-        observacao: 'Nova solicitação registrada no sistema.'
+        observacao: 'Coordenador da Unidade: ' + document.getElementById('field-coordenador-unidade').value.trim() +
+          ' | Nova solicitação registrada no sistema.'
       };
 
       try {
@@ -1559,7 +1640,7 @@
       tbody.innerHTML = '';
 
       const filtrados = solicitacoes.filter(item => {
-        const bateFiltro = filter === 'TODOS' || item.statusFinal.includes(filter) || (filter === 'Liberado' && item.statusFinal === 'Liberado');
+        const bateFiltro = filter === 'TODOS' || normalizarStatusFinal(item.statusFinal) === filter;
         const bateBusca = item.nomeMedico.toLowerCase().includes(search) || 
                           item.cpf.toLowerCase().includes(search) || 
                           item.cidade.toLowerCase().includes(search) ||
@@ -1575,9 +1656,9 @@
         tr.className = "hover:bg-slate-50 transition-colors";
 
         let badgeClass = "bg-amber-100 text-amber-800";
-        if (item.statusFinal === 'Liberado') badgeClass = "bg-emerald-100 text-emerald-800";
-        if (item.statusFinal === 'Cancelado') badgeClass = "bg-rose-100 text-rose-800";
-        if (item.statusFinal === 'Em Tratativa') badgeClass = "bg-blue-100 text-blue-800";
+        if (normalizarStatusFinal(item.statusFinal) === 'LIBERADO') badgeClass = "bg-emerald-100 text-emerald-800";
+        if (normalizarStatusFinal(item.statusFinal) === 'CANCELADO|DESISTENCIA DO PRESTADOR') badgeClass = "bg-rose-100 text-rose-800";
+        if (normalizarStatusFinal(item.statusFinal) === 'EM TRATATIVA') badgeClass = "bg-blue-100 text-blue-800";
 
         tr.innerHTML = `
           <td class="py-3 px-4">
@@ -1598,7 +1679,7 @@
           </td>
           <td class="py-3 px-4">
             <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeClass}">
-              ${item.statusFinal}
+              ${statusCanonico}
             </span>
           </td>
           <td class="py-3 px-4 text-center">
@@ -1674,6 +1755,73 @@
       }
     }
 
+    // STATUS PADRONIZADOS DA TRATATIVA
+    function normalizarStatusFinal(status) {
+      const s = String(status || '').trim().toUpperCase();
+      if (s === 'EM TRATATIVA') return 'EM TRATATIVA';
+      if (s === 'CANCELADO' || s === 'CANCELADO|DESISTÊNCIA DO PRESTADOR' || s === 'CANCELADO|DESISTENCIA DO PRESTADOR') return 'CANCELADO|DESISTENCIA DO PRESTADOR';
+      if (s === 'LIBERADO') return 'LIBERADO';
+      if (s === 'CONCLUÍDO' || s === 'CONCLUIDO') return 'CONCLUÍDO';
+      if (s === 'PENDENTE' || s === 'PENDENTE DE TREINAMENTO') return 'PENDENTE DE TREINAMENTO';
+      return status || 'PENDENTE DE TREINAMENTO';
+    }
+
+    function extrairMetaTratativa(observacao) {
+      const texto = String(observacao || '');
+      const match = texto.match(/\[TRATATIVA_META\]([\s\S]*?)\[\/TRATATIVA_META\]/);
+      if (!match) return { loginArya: '', tentativasTreinamento: 0 };
+
+      try {
+        const meta = JSON.parse(match[1]);
+        return {
+          loginArya: meta.loginArya || '',
+          tentativasTreinamento: Number(meta.tentativasTreinamento || 0)
+        };
+      } catch (_) {
+        return { loginArya: '', tentativasTreinamento: 0 };
+      }
+    }
+
+    function montarObservacaoTratativa(observacao, loginArya, tentativasTreinamento) {
+      const base = String(observacao || '')
+        .replace(/\s*\[TRATATIVA_META\][\s\S]*?\[\/TRATATIVA_META\]\s*/g, '')
+        .trim();
+
+      const meta = {
+        loginArya: String(loginArya || '').trim(),
+        tentativasTreinamento: Number(tentativasTreinamento || 0)
+      };
+
+      return (base ? base + '\n' : '') +
+        '[TRATATIVA_META]' + JSON.stringify(meta) + '[/TRATATIVA_META]';
+    }
+
+    function popularFiltrosSLA() {
+      const bancoSelect = document.getElementById('sla-filter-banco');
+      const opSelect = document.getElementById('sla-filter-op-responsavel');
+      if (!bancoSelect || !opSelect) return;
+
+      const bancoAtual = bancoSelect.value || 'TODOS';
+      const opAtual = opSelect.value || 'TODOS';
+
+      const bancos = [...new Set(
+        solicitacoes.map(s => String(s.operadora || '').trim()).filter(Boolean)
+      )].sort((a,b) => a.localeCompare(b, 'pt-BR'));
+
+      const operadores = [...new Set(
+        solicitacoes.map(s => String(s.opResponsavel || '').trim()).filter(Boolean)
+      )].sort((a,b) => a.localeCompare(b, 'pt-BR'));
+
+      bancoSelect.innerHTML = '<option value="TODOS">Todos os Bancos</option>' +
+        bancos.map(v => `<option value="${v.replace(/"/g, '&quot;')}">${v}</option>`).join('');
+
+      opSelect.innerHTML = '<option value="TODOS">Todos os Operadores</option>' +
+        operadores.map(v => `<option value="${v.replace(/"/g, '&quot;')}">${v}</option>`).join('');
+
+      if ([...bancoSelect.options].some(o => o.value === bancoAtual)) bancoSelect.value = bancoAtual;
+      if ([...opSelect.options].some(o => o.value === opAtual)) opSelect.value = opAtual;
+    }
+
     // RECEPTIVO E SLA ADMIN
     function validarSenhaAdmin() {
       const pass = document.getElementById('admin-password-input').value;
@@ -1693,6 +1841,8 @@
 
     function limparFiltrosSLA() {
       document.getElementById('sla-filter-search').value = '';
+      document.getElementById('sla-filter-banco').value = 'TODOS';
+      document.getElementById('sla-filter-op-responsavel').value = 'TODOS';
       document.getElementById('sla-filter-status').value = 'TODOS';
       document.getElementById('sla-filter-condicao').value = 'TODOS';
       document.getElementById('sla-filter-periodo').value = '';
@@ -1719,7 +1869,10 @@
       const tbody = document.getElementById('tbody-sla');
       const empty = document.getElementById('sla-empty');
 
+      popularFiltrosSLA();
       const search = document.getElementById('sla-filter-search').value.toLowerCase();
+      const filterBanco = document.getElementById('sla-filter-banco').value;
+      const filterOpResponsavel = document.getElementById('sla-filter-op-responsavel').value;
       const filterStatus = document.getElementById('sla-filter-status').value;
       const filterCondicao = document.getElementById('sla-filter-condicao').value;
       const filterPeriodo = document.getElementById('sla-filter-periodo').value;
@@ -1728,8 +1881,8 @@
 
       // ATUALIZAR CARDS DE QUANTIDADES & SLA
       const total = solicitacoes.length;
-      const pendentes = solicitacoes.filter(s => s.statusFinal === 'Pendente' || s.statusFinal === 'Em Tratativa').length;
-      const concluidas = solicitacoes.filter(s => s.statusFinal === 'Liberado').length;
+      const pendentes = solicitacoes.filter(s => normalizarStatusFinal(s.statusFinal) === 'PENDENTE DE TREINAMENTO' || normalizarStatusFinal(s.statusFinal) === 'EM TRATATIVA').length;
+      const concluidas = solicitacoes.filter(s => normalizarStatusFinal(s.statusFinal) === 'LIBERADO').length;
 
       let somaPendente = 0, contaPendente = 0;
       let somaTratativa = 0, contaTratativa = 0;
@@ -1761,7 +1914,10 @@
                           s.id.toLowerCase().includes(search) ||
                           s.especialidade.toLowerCase().includes(search);
 
-        const bateStatus = filterStatus === 'TODOS' || s.statusFinal.includes(filterStatus);
+        const bateBanco = filterBanco === 'TODOS' || String(s.operadora || '') === filterBanco;
+        const bateOpResponsavel = filterOpResponsavel === 'TODOS' || String(s.opResponsavel || '') === filterOpResponsavel;
+        const statusCanonico = normalizarStatusFinal(s.statusFinal);
+        const bateStatus = filterStatus === 'TODOS' || statusCanonico === filterStatus;
 
         const diasTotal = calcularDiasEsteira(s);
         let bateCondicao = true;
@@ -1774,7 +1930,7 @@
           batePeriodo = s.mesEntrada === filterPeriodo;
         }
 
-        return bateBusca && bateStatus && bateCondicao && batePeriodo;
+        return bateBusca && bateBanco && bateOpResponsavel && bateStatus && bateCondicao && batePeriodo;
       });
 
       if (filtrados.length === 0) empty.classList.remove('hidden');
@@ -1784,10 +1940,11 @@
         const diasTotal = calcularDiasEsteira(item);
         const badgeSla = obterBadgeSLA(diasTotal);
 
+        const statusCanonico = normalizarStatusFinal(item.statusFinal);
         let statusClass = "bg-amber-100 text-amber-800";
-        if (item.statusFinal === 'Liberado') statusClass = "bg-emerald-100 text-emerald-800";
-        if (item.statusFinal === 'Cancelado') statusClass = "bg-rose-100 text-rose-800";
-        if (item.statusFinal === 'Em Tratativa') statusClass = "bg-blue-100 text-blue-800";
+        if (statusCanonico === 'LIBERADO' || statusCanonico === 'CONCLUÍDO') statusClass = "bg-emerald-100 text-emerald-800";
+        if (statusCanonico === 'CANCELADO|DESISTENCIA DO PRESTADOR') statusClass = "bg-rose-100 text-rose-800";
+        if (statusCanonico === 'EM TRATATIVA') statusClass = "bg-blue-100 text-blue-800";
 
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 transition-colors border-b border-slate-100";
@@ -1805,7 +1962,7 @@
               ${badgeSla.label}
             </span>
           </td>
-          <td class="py-3 px-3 font-semibold">${item.acessoArya}</td>
+          <td class="py-3 px-3 font-semibold">${item.loginArya || extrairMetaTratativa(item.observacao).loginArya || "-"}</td>
           <td class="py-3 px-3">${item.opResponsavel || '<span class="text-slate-400">Pendente</span>'}</td>
           <td class="py-3 px-3">
             <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${statusClass}">
@@ -1831,15 +1988,16 @@
       document.getElementById('modal-medico-nome').textContent = `Tratativa SLA: ${item.nomeMedico}`;
       document.getElementById('modal-protocolo').textContent = `Protocolo: ${item.id} | Arya Solic: ${item.acessoArya} | Dias na esteira: ${calcularDiasEsteira(item)}d`;
 
+      const metaTratativa = extrairMetaTratativa(item.observacao);
       document.getElementById('trat-login').value = item.login || '';
       document.getElementById('trat-login-redearya').value = item.loginRedeArya || '';
-      document.getElementById('trat-treinamento').value = item.treinamento || 'Pendente';
+      document.getElementById('trat-login-arya').value = item.loginArya || metaTratativa.loginArya || '';
+      document.getElementById('trat-treinamento').value = item.treinamento || 'AGUARDANDO RET. MÉDICO';
+      document.getElementById('trat-tentativas-treinamento').value = Number(item.tentativasTreinamento || metaTratativa.tentativasTreinamento || 0);
       document.getElementById('trat-data-treinamento').value = formatarDataBR(item.dataTreinamento || '');
-      document.getElementById('trat-agenda').value = item.agenda || '';
-      document.getElementById('trat-inicio-agenda').value = formatarDataBR(item.inicioAgenda || '');
       document.getElementById('trat-op-responsavel').value = item.opResponsavel || '';
-      document.getElementById('trat-status-final').value = item.statusFinal || 'Pendente';
-      document.getElementById('trat-observacao').value = item.observacao || '';
+      document.getElementById('trat-status-final').value = normalizarStatusFinal(item.statusFinal);
+      document.getElementById('trat-observacao').value = String(item.observacao || '').replace(/\s*\[TRATATIVA_META\][\s\S]*?\[\/TRATATIVA_META\]\s*/g, '').trim();
 
       document.getElementById('modal-tratativa').classList.remove('hidden');
     }
@@ -1856,18 +2014,22 @@
       if (index !== -1) {
         const statusAnterior = solicitacoes[index].statusFinal;
         const areaAnterior = solicitacoes[index].areaAtual || '';
-        solicitacoes[index].login = document.getElementById('trat-login').value;
-        solicitacoes[index].loginRedeArya = document.getElementById('trat-login-redearya').value;
+        solicitacoes[index].login = document.getElementById('trat-login').value.trim();
+        solicitacoes[index].loginRedeArya = document.getElementById('trat-login-redearya').value.trim();
+        solicitacoes[index].loginArya = document.getElementById('trat-login-arya').value.trim();
         solicitacoes[index].treinamento = document.getElementById('trat-treinamento').value;
+        solicitacoes[index].tentativasTreinamento = Number(document.getElementById('trat-tentativas-treinamento').value || 0);
         solicitacoes[index].dataTreinamento = document.getElementById('trat-data-treinamento').value;
-        solicitacoes[index].agenda = document.getElementById('trat-agenda').value;
-        solicitacoes[index].inicioAgenda = document.getElementById('trat-inicio-agenda').value;
         solicitacoes[index].opResponsavel = document.getElementById('trat-op-responsavel').value;
-        solicitacoes[index].statusFinal = document.getElementById('trat-status-final').value;
-        solicitacoes[index].observacao = document.getElementById('trat-observacao').value;
+        solicitacoes[index].statusFinal = normalizarStatusFinal(document.getElementById('trat-status-final').value);
+        solicitacoes[index].observacao = montarObservacaoTratativa(
+          document.getElementById('trat-observacao').value,
+          solicitacoes[index].loginArya,
+          solicitacoes[index].tentativasTreinamento
+        );
 
         // Se mudou para em tratativa, ajusta contadores
-        if (solicitacoes[index].statusFinal === 'Em Tratativa' && solicitacoes[index].diasEmTratativa === 0) {
+        if (solicitacoes[index].statusFinal === 'EM TRATATIVA' && solicitacoes[index].diasEmTratativa === 0) {
           solicitacoes[index].diasEmTratativa = 1;
         }
 
@@ -1905,19 +2067,19 @@
     // DASHBOARD E INSIGHTS
     function renderDashboard() {
       const total = solicitacoes.length;
-      const liberados = solicitacoes.filter(s => s.statusFinal === 'Liberado').length;
-      const pendentes = solicitacoes.filter(s => s.statusFinal === 'Pendente' || s.statusFinal === 'Em Tratativa').length;
-      const cancelados = solicitacoes.filter(s => s.statusFinal === 'Cancelado').length;
+      const liberados = solicitacoes.filter(s => normalizarStatusFinal(s.statusFinal) === 'LIBERADO').length;
+      const pendentes = solicitacoes.filter(s => normalizarStatusFinal(s.statusFinal) === 'PENDENTE DE TREINAMENTO' || normalizarStatusFinal(s.statusFinal) === 'EM TRATATIVA').length;
+      const cancelados = solicitacoes.filter(s => normalizarStatusFinal(s.statusFinal) === 'CANCELADO|DESISTENCIA DO PRESTADOR').length;
 
       // CÁLCULO DA LINHA DO TEMPO (PRESTADORES POR FASE)
       let f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0;
 
       solicitacoes.forEach(s => {
-        if (s.statusFinal === 'Liberado') {
+        if (normalizarStatusFinal(s.statusFinal) === 'LIBERADO') {
           f5++;
-        } else if (s.statusFinal === 'Cancelado') {
+        } else if (normalizarStatusFinal(s.statusFinal) === 'CANCELADO|DESISTENCIA DO PRESTADOR') {
           // não contabiliza no pipeline ativo
-        } else if (s.statusFinal === 'Em Tratativa') {
+        } else if (normalizarStatusFinal(s.statusFinal) === 'EM TRATATIVA') {
           if (s.inicioAgenda || s.agenda === 'Liberada') {
             f4++;
           } else if (s.treinamento === 'Agendado' || s.treinamento === 'Concluído') {
@@ -1964,7 +2126,7 @@
       solicitacoes.forEach(s => {
         const m = s.mesEntrada || 'Outros';
         if (!mesesMap[m]) mesesMap[m] = 0;
-        if (s.statusFinal === 'Liberado') mesesMap[m]++;
+        if (normalizarStatusFinal(s.statusFinal) === 'LIBERADO') mesesMap[m]++;
       });
 
       const labelsBarra = Object.keys(mesesMap).sort();
